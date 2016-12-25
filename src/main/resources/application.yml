@@ -7,7 +7,7 @@ eureka:
       defaultZone: ${EUREKA_URL:http://localhost:5000/eureka/}
 
 server:
-  port: 9999
+  port: ${PORT:9999}
   contextPath: /uaa
 security:
   user:
@@ -16,7 +16,7 @@ security:
   oauth2:
     client:
       clientId: jalgoarena
-      clientSecret: jalgoarenasecret
+      clientSecret: ${CLIENT_SECRET:jalgoarenasecret}
       authorizedGrantTypes: authorization_code,refresh_token,password
       scope: openid
 ---
@@ -26,10 +26,6 @@ eureka:
   instance:
     hostname: ${APP_NAME}.herokuapp.com
     nonSecurePort: 80
-security:
-  oauth2:
-    client:
-      clientSecret: ${CLIENT_SECRET}
 logging:
   level:
     ROOT: INFO

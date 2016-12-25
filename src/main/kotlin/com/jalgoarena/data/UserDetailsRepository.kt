@@ -60,6 +60,8 @@ class UserDetailsRepository(dbName: String) {
 
     fun addUser(user: UserDetails) {
         transactional {
+            checkIfUsernameOrEmailIsAlreadyUsed(it, user)
+
             it.newEntity(Constants.entityType).apply {
                 setProperty(Constants.username, user.username)
                 setProperty(Constants.password, user.password)
@@ -68,6 +70,18 @@ class UserDetailsRepository(dbName: String) {
                 setProperty(Constants.team, user.team)
             }
         }
+    }
+
+    private fun checkIfUsernameOrEmailIsAlreadyUsed(it: PersistentStoreTransaction, user: UserDetails) {
+        val usernameAlreadyUsed =
+                it.find(Constants.entityType, Constants.username, user.username).firstOrNull()
+        if (usernameAlreadyUsed != null)
+            throw UsernameIsAlreadyUsedException()
+
+        val emailAlreadyUsed =
+                it.find(Constants.entityType, Constants.email, user.email).firstOrNull()
+        if (emailAlreadyUsed != null)
+            throw EmailIsAlreadyUsedException()
     }
 }
 

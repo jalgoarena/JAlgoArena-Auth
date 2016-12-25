@@ -1,6 +1,8 @@
 package com.jalgoarena
 
+import com.jalgoarena.data.EmailIsAlreadyUsedException
 import com.jalgoarena.data.UserDetailsRepository
+import com.jalgoarena.data.UsernameIsAlreadyUsedException
 import com.jalgoarena.domain.UserDetails
 import com.winterbe.expekt.should
 import jetbrains.exodus.entitystore.PersistentEntityStores
@@ -41,6 +43,18 @@ class AccountRepositorySpec {
         repository.addUser(sampleUser("Madzia", "madzia@mail.com"))
         val user = repository.findByUsername("Madzia")!!
         user.email.should.equal("madzia@mail.com")
+    }
+
+    @Test(expected = UsernameIsAlreadyUsedException::class)
+    fun throws_exception_if_there_is_user_with_same_username() {
+        repository.addUser(sampleUser("Jacek", "jacek@mail.com"))
+        repository.addUser(sampleUser("Jacek", "jacek2@mail.com"))
+    }
+
+    @Test(expected = EmailIsAlreadyUsedException::class)
+    fun throws_exception_if_there_is_user_with_same_email() {
+        repository.addUser(sampleUser("Jacek", "jacek@mail.com"))
+        repository.addUser(sampleUser("Jacek2", "jacek@mail.com"))
     }
 
     private val sampleUser =

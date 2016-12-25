@@ -19,7 +19,6 @@ security:
       clientSecret: jalgoarenasecret
       authorizedGrantTypes: authorization_code,refresh_token,password
       scope: openid
-
 ---
 spring:
   profiles: heroku
@@ -27,7 +26,10 @@ eureka:
   instance:
     hostname: ${APP_NAME}.herokuapp.com
     nonSecurePort: 80
-
+security:
+  oauth2:
+    client:
+      clientSecret: ${CLIENT_SECRET}
 logging:
   level:
     ROOT: INFO

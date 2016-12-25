@@ -17,9 +17,7 @@ import java.security.Principal
 open class JAlgoArenaAuthServer {
 
     @RequestMapping("/user")
-    fun user(user: Principal): Principal {
-        return user
-    }
+    fun user(user: Principal) = user
 }
 
 fun main(args: Array<String>) {

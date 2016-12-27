@@ -28,12 +28,16 @@ class AjaxLoginProcessingFilter(
     private val LOG = LoggerFactory.getLogger(this.javaClass)
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
-        if (HttpMethod.POST.name != request.method || !WebUtil.isAjax(request)) {
-            LOG.debug("Authentication method not supported. Request method: " + request.method)
-            throw AuthMethodNotSupportedException("Authentication method not supported")
-        }
+        validateHttpMethod(request)
 
-        val loginRequest: LoginRequest?
+        val (username, password) = parseLoginRequest(request)
+        val token = UsernamePasswordAuthenticationToken(username, password)
+
+        return this.authenticationManager.authenticate(token)
+    }
+
+    private fun parseLoginRequest(request: HttpServletRequest): Pair<String, String> {
+        val loginRequest: LoginRequest
         try {
             loginRequest = objectMapper.readValue(request.reader, LoginRequest::class.java)
         } catch(e: JsonMappingException) {
@@ -43,10 +47,19 @@ class AjaxLoginProcessingFilter(
         if (loginRequest.username.isNullOrBlank() || loginRequest.password.isNullOrBlank()) {
             throw AuthenticationServiceException("Username or Password not provided")
         }
+        return Pair(loginRequest.username, loginRequest.password)
+    }
 
-        val token = UsernamePasswordAuthenticationToken(loginRequest.username, loginRequest.password)
+    private fun validateHttpMethod(request: HttpServletRequest) {
+        val isCorrectHttpMethod = arrayOf(
+                HttpMethod.POST.name, HttpMethod.OPTIONS.name
+        ).contains(request.method)
 
-        return this.authenticationManager.authenticate(token)
+        if (isCorrectHttpMethod && WebUtil.isAjax(request))
+            return
+
+        LOG.debug("Authentication method not supported. Request method: ${request.method}")
+        throw AuthMethodNotSupportedException("Authentication method not supported: ${request.method}")
     }
 
     override fun successfulAuthentication(

@@ -14,5 +14,5 @@ class JwtExpiredTokenException : AuthenticationException {
         this.token = token
     }
 
-    fun token(): String = token!!.token
+    fun token(): String? = token!!.token
 }

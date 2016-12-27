@@ -55,12 +55,6 @@ dependencies {
             "com.winterbe:expekt:0.5.0"
 }
 
-dependencies {
-    optional "org.springframework.boot:spring-boot-configuration-processor"
-}
-
-compileJava.dependsOn(processResources)
-
 apply plugin: 'jacoco'
 
 jacocoTestReport {

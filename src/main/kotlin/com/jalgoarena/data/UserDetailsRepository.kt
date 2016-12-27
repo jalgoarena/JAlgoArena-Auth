@@ -72,7 +72,7 @@ class UserDetailsRepository(dbName: String) {
                 setProperty(Constants.email, user.email)
                 setProperty(Constants.region, user.region)
                 setProperty(Constants.team, user.team)
-                setProperty(Constants.role, user.role)
+                setProperty(Constants.role, user.role.name)
             }
         }
     }

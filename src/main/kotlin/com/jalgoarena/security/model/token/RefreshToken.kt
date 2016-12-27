@@ -6,17 +6,14 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import java.util.*
 
-class RefreshToken private constructor(val claims: Jws<Claims>) : JwtToken {
+class RefreshToken(val claims: Jws<Claims>) : JwtToken {
 
-    override fun getToken(): String? {
-        return null
-    }
+    override val token: String?
+        get() = null
 
-    val jti: String
-        get() = claims.body.id
+    fun jti() = claims.body.id
 
-    val subject: String
-        get() = claims.body.subject
+    fun subject() = claims.body.subject
 
     companion object {
 

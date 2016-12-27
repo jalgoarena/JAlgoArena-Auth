@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConfigurationProperties(prefix = "jalgo.security.jwt")
+@ConfigurationProperties(prefix = "jalgoarena.security.jwt")
 open class JwtSettings {
     /**
      * [JwtToken] will expire after this time.

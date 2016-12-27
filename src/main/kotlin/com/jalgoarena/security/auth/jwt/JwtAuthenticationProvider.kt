@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
+import java.util.*
 import javax.inject.Inject
 
 @Component
@@ -20,9 +21,10 @@ open class JwtAuthenticationProvider(
 
         val jwsClaims = rawAccessToken.parseClaims(jwtSettings.tokenSigningKey!!)
         val subject = jwsClaims.body.subject
-        val scopes = jwsClaims.body.get("scopes", Array<String>::class.java)
-        val authorities = scopes
-                .map(::SimpleGrantedAuthority)
+        val scopes = jwsClaims.body.get("scopes", ArrayList::class.java)
+        val authorities = scopes.map {authority ->
+            SimpleGrantedAuthority(authority as String)
+        }
 
         val context = UserContext.create(subject, authorities)
 

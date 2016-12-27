@@ -8,14 +8,6 @@ eureka:
 
 server:
   port: ${PORT:9999}
-security:
-  oauth2:
-    client:
-      clientId: jalgoarena
-      clientSecret: ${CLIENT_SECRET:jalgoarenasecret}
-      authorizedGrantTypes: authorization_code,refresh_token,password
-      scope: openid
-      auto-approve-scopes: openid
 ---
 spring:
   profiles: heroku

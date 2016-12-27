@@ -10,10 +10,14 @@ import org.springframework.stereotype.Service
 import javax.inject.Inject
 
 @Service
-open class AccountUserDetailsService(@Inject val userDetailsRepository: UserDetailsRepository) : UserDetailsService {
+open class AccountUserDetailsService(
+        @Inject private val userDetailsRepository: UserDetailsRepository) : UserDetailsService {
+
     override fun loadUserByUsername(username: String): UserDetails {
-        val userDetails: com.jalgoarena.domain.UserDetails = userDetailsRepository.findByUsername(username) ?:
+        val userDetails: com.jalgoarena.domain.UserDetails =
+                userDetailsRepository.findByUsername(username) ?:
                 throw UsernameNotFoundException("couldn't find $username!")
+
         return User(
                 userDetails.username,
                 userDetails.password,

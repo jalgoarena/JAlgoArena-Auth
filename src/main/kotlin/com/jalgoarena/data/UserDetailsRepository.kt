@@ -6,6 +6,7 @@ import jetbrains.exodus.entitystore.PersistentEntityStore
 import jetbrains.exodus.entitystore.PersistentEntityStores
 import jetbrains.exodus.entitystore.PersistentStoreTransaction
 import org.slf4j.LoggerFactory
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Repository
 import javax.annotation.PreDestroy
 
@@ -64,7 +65,10 @@ class UserDetailsRepository(dbName: String) {
 
             it.newEntity(Constants.entityType).apply {
                 setProperty(Constants.username, user.username)
-                setProperty(Constants.password, user.password)
+                setProperty(
+                        Constants.password,
+                        BCryptPasswordEncoder().encode(user.password)
+                )
                 setProperty(Constants.email, user.email)
                 setProperty(Constants.region, user.region)
                 setProperty(Constants.team, user.team)

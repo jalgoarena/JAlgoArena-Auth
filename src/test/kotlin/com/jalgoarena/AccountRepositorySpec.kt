@@ -3,7 +3,7 @@ package com.jalgoarena
 import com.jalgoarena.data.EmailIsAlreadyUsedException
 import com.jalgoarena.data.UserDetailsRepository
 import com.jalgoarena.data.UsernameIsAlreadyUsedException
-import com.jalgoarena.domain.UserDetails
+import com.jalgoarena.domain.User
 import com.winterbe.expekt.should
 import jetbrains.exodus.entitystore.PersistentEntityStores
 import org.junit.AfterClass
@@ -58,5 +58,5 @@ class AccountRepositorySpec {
     }
 
     private val sampleUser =
-            { username: String, email: String -> UserDetails(username, "blabla", email, "PL", "Team A") }
+            { username: String, email: String -> User(username, "blabla", email, "PL", "Team A") }
 }

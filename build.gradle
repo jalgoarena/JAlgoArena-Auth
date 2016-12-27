@@ -44,6 +44,7 @@ dependencies {
             'org.springframework.cloud:spring-cloud-starter-eureka',
             'org.springframework.security:spring-security-config',
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+            "io.jsonwebtoken:jjwt:0.7.0",
             'org.jetbrains.xodus:xodus-openAPI:1.0.2',
             'org.jetbrains.xodus:xodus-entity-store:1.0.2'
 
@@ -53,6 +54,12 @@ dependencies {
     testCompile 'junit:junit:4.12',
             "com.winterbe:expekt:0.5.0"
 }
+
+dependencies {
+    optional "org.springframework.boot:spring-boot-configuration-processor"
+}
+
+compileJava.dependsOn(processResources)
 
 apply plugin: 'jacoco'
 

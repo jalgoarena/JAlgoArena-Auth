@@ -1,7 +1,8 @@
 package com.jalgoarena.utils
 
 import com.jalgoarena.data.UserDetailsRepository
-import com.jalgoarena.domain.UserDetails
+import com.jalgoarena.domain.Role
+import com.jalgoarena.domain.User
 
 class UserDetailsStoreSetup() {
 
@@ -9,13 +10,13 @@ class UserDetailsStoreSetup() {
 
         val repository = UserDetailsRepository()
         try {
-            repository.addUser(UserDetails(
+            repository.addUser(User(
                     username = "admin",
                     password = "<PASSWORD>",
                     email = "admin@mail.com",
                     region = "Krakow",
-                    team = "Admins"
-
+                    team = "Admins",
+                    role = Role.ADMIN
             ))
         } finally {
             repository.destroy()

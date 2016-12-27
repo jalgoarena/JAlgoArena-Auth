@@ -1,7 +1,7 @@
 package com.jalgoarena.data
 
 import com.jalgoarena.domain.Constants
-import com.jalgoarena.domain.UserDetails
+import com.jalgoarena.domain.User
 import jetbrains.exodus.entitystore.PersistentEntityStore
 import jetbrains.exodus.entitystore.PersistentEntityStores
 import jetbrains.exodus.entitystore.PersistentStoreTransaction
@@ -18,19 +18,19 @@ class UserDetailsRepository(dbName: String) {
     private val LOG = LoggerFactory.getLogger(this.javaClass)
     private val store: PersistentEntityStore = PersistentEntityStores.newInstance(dbName)
 
-    fun findAll(): List<UserDetails> {
+    fun findAll(): List<User> {
         return readonly {
-            it.getAll(Constants.entityType).map { UserDetails.from(it) }
+            it.getAll(Constants.entityType).map { User.from(it) }
         }
     }
 
-    fun findByUsername(username: String): UserDetails? {
+    fun findByUsername(username: String): User? {
         return readonly {
             it.find(
                     Constants.entityType,
                     Constants.username,
                     username
-            ).map { UserDetails.from(it) }.firstOrNull()
+            ).map { User.from(it) }.firstOrNull()
         }
     }
 
@@ -59,7 +59,7 @@ class UserDetailsRepository(dbName: String) {
         return readonly(store, call)
     }
 
-    fun addUser(user: UserDetails) {
+    fun addUser(user: User) {
         transactional {
             checkIfUsernameOrEmailIsAlreadyUsed(it, user)
 
@@ -72,11 +72,12 @@ class UserDetailsRepository(dbName: String) {
                 setProperty(Constants.email, user.email)
                 setProperty(Constants.region, user.region)
                 setProperty(Constants.team, user.team)
+                setProperty(Constants.role, user.role)
             }
         }
     }
 
-    private fun checkIfUsernameOrEmailIsAlreadyUsed(it: PersistentStoreTransaction, user: UserDetails) {
+    private fun checkIfUsernameOrEmailIsAlreadyUsed(it: PersistentStoreTransaction, user: User) {
         val usernameAlreadyUsed =
                 it.find(Constants.entityType, Constants.username, user.username).firstOrNull()
         if (usernameAlreadyUsed != null)

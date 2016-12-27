@@ -15,7 +15,7 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Bean
     open fun accountUserDetailsService(repository: UserDetailsRepository) =
-            AccountUserDetailsService(repository)
+            DatabaseUserService(repository)
 
     @Bean
     open fun passwordEncoder() = BCryptPasswordEncoder()

@@ -2,10 +2,6 @@ package com.jalgoarena.security.auth.ajax
 
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.jalgoarena.common.WebUtil
-import com.jalgoarena.security.exceptions.AuthMethodNotSupportedException
-import org.slf4j.LoggerFactory
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -25,10 +21,7 @@ class AjaxLoginProcessingFilter(
         private val objectMapper: ObjectMapper
 ) : AbstractAuthenticationProcessingFilter(defaultProcessUrl) {
 
-    private val LOG = LoggerFactory.getLogger(this.javaClass)
-
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
-        validateHttpMethod(request)
 
         val (username, password) = parseLoginRequest(request)
         val token = UsernamePasswordAuthenticationToken(username, password)
@@ -48,18 +41,6 @@ class AjaxLoginProcessingFilter(
             throw AuthenticationServiceException("Username or Password not provided")
         }
         return Pair(loginRequest.username, loginRequest.password)
-    }
-
-    private fun validateHttpMethod(request: HttpServletRequest) {
-        val isCorrectHttpMethod = arrayOf(
-                HttpMethod.POST.name, HttpMethod.OPTIONS.name
-        ).contains(request.method)
-
-        if (isCorrectHttpMethod && WebUtil.isAjax(request))
-            return
-
-        LOG.debug("Authentication method not supported. Request method: ${request.method}")
-        throw AuthMethodNotSupportedException("Authentication method not supported: ${request.method}")
     }
 
     override fun successfulAuthentication(

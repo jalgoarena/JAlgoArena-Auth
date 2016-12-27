@@ -12,7 +12,7 @@ class UserDetailsStoreSetup() {
         try {
             repository.addUser(User(
                     username = "admin",
-                    password = "<PASSWORD>",
+                    password = "123123",
                     email = "admin@mail.com",
                     region = "Krakow",
                     team = "Admins",

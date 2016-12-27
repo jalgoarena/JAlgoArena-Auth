@@ -1,5 +1,6 @@
 package com.jalgoarena.security.auth.ajax
 
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jalgoarena.common.WebUtil
 import com.jalgoarena.security.exceptions.AuthMethodNotSupportedException
@@ -32,7 +33,12 @@ class AjaxLoginProcessingFilter(
             throw AuthMethodNotSupportedException("Authentication method not supported")
         }
 
-        val loginRequest = objectMapper.readValue(request.reader, LoginRequest::class.java)
+        val loginRequest: LoginRequest?
+        try {
+            loginRequest = objectMapper.readValue(request.reader, LoginRequest::class.java)
+        } catch(e: JsonMappingException) {
+            throw AuthenticationServiceException("Username or Password not provided")
+        }
 
         if (loginRequest.username.isNullOrBlank() || loginRequest.password.isNullOrBlank()) {
             throw AuthenticationServiceException("Username or Password not provided")

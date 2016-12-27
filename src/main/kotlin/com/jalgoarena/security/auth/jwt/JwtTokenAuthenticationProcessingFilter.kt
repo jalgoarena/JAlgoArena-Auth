@@ -21,7 +21,7 @@ constructor(private val authenticationFailureHandler: AuthenticationFailureHandl
             private val tokenExtractor: TokenExtractor, matcher: RequestMatcher) : AbstractAuthenticationProcessingFilter(matcher) {
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
-        val tokenPayload = request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM)
+        val tokenPayload: String? = request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM)
         val token = RawAccessJwtToken(tokenExtractor.extract(tokenPayload))
         return authenticationManager.authenticate(JwtAuthenticationToken(token))
     }

@@ -8,6 +8,12 @@ eureka:
 
 server:
   port: ${PORT:9999}
+
+jalgoarena.security.jwt:
+  tokenExpirationTime: 15 # Number of minutes
+  refreshTokenExpTime: 60 # Minutes
+  tokenIssuer: http://jalgoarena.com
+  tokenSigningKey: U9FdVDcRlKRV+WDzSOCmdeKkhR9MWANj1Ksti9GiXPdzgyL4LBGhFLvzDxOkJDg/JvD65s3rbcUda757Re4uAA==
 ---
 spring:
   profiles: heroku

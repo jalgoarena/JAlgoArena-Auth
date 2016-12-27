@@ -35,6 +35,6 @@ open class AjaxAuthenticationProvider(
         return UsernamePasswordAuthenticationToken(userContext, null, userContext.authorities)
     }
 
-    override fun supports(authentication: Class<*>): Boolean =
-            authentication is UsernamePasswordAuthenticationToken
+    override fun supports(authentication: Class<*>) =
+            UsernamePasswordAuthenticationToken::class.java.isAssignableFrom(authentication)
 }

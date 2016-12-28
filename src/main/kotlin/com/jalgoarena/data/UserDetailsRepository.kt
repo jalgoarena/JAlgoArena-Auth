@@ -59,11 +59,11 @@ class UserDetailsRepository(dbName: String) {
         return readonly(store, call)
     }
 
-    fun addUser(user: User) {
-        transactional {
+    fun addUser(user: User): User {
+        return transactional {
             checkIfUsernameOrEmailIsAlreadyUsed(it, user)
 
-            it.newEntity(Constants.entityType).apply {
+            val entity = it.newEntity(Constants.entityType).apply {
                 setProperty(Constants.username, user.username)
                 setProperty(
                         Constants.password,
@@ -74,6 +74,8 @@ class UserDetailsRepository(dbName: String) {
                 setProperty(Constants.team, user.team)
                 setProperty(Constants.role, user.role.name)
             }
+
+            User.from(entity)
         }
     }
 

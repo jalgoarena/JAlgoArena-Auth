@@ -50,6 +50,6 @@ class UsersController {
         return user
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/signup", produces = arrayOf("application/json"))
     fun signup(@RequestBody userDetails: User) = repository.addUser(userDetails)
 }

@@ -1,6 +1,6 @@
 package com.jalgoarena.security.exceptions
 
-import org.springframework.security.authentication.AuthenticationServiceException
+import org.springframework.security.core.AuthenticationException
 
 class AuthMethodNotSupportedException(message: String) :
-        AuthenticationServiceException(message)
+        AuthenticationException(message)

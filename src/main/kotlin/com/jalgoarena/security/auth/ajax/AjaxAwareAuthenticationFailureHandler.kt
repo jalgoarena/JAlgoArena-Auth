@@ -3,6 +3,7 @@ package com.jalgoarena.security.auth.ajax
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jalgoarena.common.ErrorCode
 import com.jalgoarena.common.ErrorResponse
+import com.jalgoarena.security.exceptions.AuthMethodNotSupportedException
 import com.jalgoarena.security.exceptions.JwtExpiredTokenException
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -42,6 +43,14 @@ open class AjaxAwareAuthenticationFailureHandler(
                     ErrorResponse(
                             "Token has expired",
                             ErrorCode.JWT_TOKEN_EXPIRED,
+                            HttpStatus.UNAUTHORIZED
+                    )
+            )
+            is AuthMethodNotSupportedException -> mapper.writeValue(
+                    response.writer,
+                    ErrorResponse(
+                            e.message!!,
+                            ErrorCode.AUTHENTICATION,
                             HttpStatus.UNAUTHORIZED
                     )
             )

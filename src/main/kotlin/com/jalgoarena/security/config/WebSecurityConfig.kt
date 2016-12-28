@@ -1,10 +1,10 @@
 package com.jalgoarena.security.config
 
-import java.util.Arrays
-
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jalgoarena.security.RestAuthenticationEntryPoint
 import com.jalgoarena.security.auth.ajax.AjaxAuthenticationProvider
 import com.jalgoarena.security.auth.ajax.AjaxLoginProcessingFilter
+import com.jalgoarena.security.auth.jwt.JwtAuthenticationProvider
 import com.jalgoarena.security.auth.jwt.JwtTokenAuthenticationProcessingFilter
 import com.jalgoarena.security.auth.jwt.SkipPathRequestMatcher
 import com.jalgoarena.security.auth.jwt.extractor.TokenExtractor
@@ -21,9 +21,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
+import java.util.*
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.jalgoarena.security.auth.jwt.JwtAuthenticationProvider
 
 @Configuration
 @EnableWebSecurity
@@ -55,7 +57,6 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    @Throws(Exception::class)
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
@@ -72,7 +73,7 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http
-                .csrf().disable() // We don't need CSRF for JWT based authentication
+                .csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(this.authenticationEntryPoint)
 
@@ -84,13 +85,25 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 .authorizeRequests()
                 .antMatchers(FORM_BASED_LOGIN_ENTRY_POINT).permitAll() // Login end-point
                 .antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll() // Token refresh end-point
-                .antMatchers("/console").permitAll() // H2 Console Dash-board - only for testing
                 .and()
                 .authorizeRequests()
                 .antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated() // Protected API End-points
                 .and()
                 .addFilterBefore(buildAjaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter::class.java)
                 .addFilterBefore(buildJwtTokenAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter::class.java)
+                .addFilterBefore(corsFilter(), AjaxLoginProcessingFilter::class.java)
+    }
+
+    private fun corsFilter(): CorsFilter {
+        val source = UrlBasedCorsConfigurationSource()
+        val config = CorsConfiguration()
+        config.allowCredentials = true
+        config.addAllowedOrigin("*")
+        config.addAllowedHeader("*")
+        config.addAllowedMethod("*")
+        source.registerCorsConfiguration("/**", config)
+
+        return CorsFilter(source)
     }
 
     companion object {

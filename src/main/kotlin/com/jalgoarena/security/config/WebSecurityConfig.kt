@@ -76,22 +76,21 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 .csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(this.authenticationEntryPoint)
-
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests()
-                .antMatchers(FORM_BASED_LOGIN_ENTRY_POINT).permitAll() // Login end-point
-                .antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll() // Token refresh end-point
+                    .authorizeRequests()
+                    .antMatchers(FORM_BASED_LOGIN_ENTRY_POINT).permitAll()
+                    .antMatchers(FORM_BASED_SIGNUP_ENTRY_POINT).permitAll()
+                    .antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll()
                 .and()
-                .authorizeRequests()
-                .antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated() // Protected API End-points
+                    .authorizeRequests()
+                    .antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated()
                 .and()
-                .addFilterBefore(buildAjaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter::class.java)
-                .addFilterBefore(buildJwtTokenAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter::class.java)
-                .addFilterBefore(corsFilter(), AjaxLoginProcessingFilter::class.java)
+                    .addFilterBefore(buildAjaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter::class.java)
+                    .addFilterBefore(buildJwtTokenAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter::class.java)
+                    .addFilterBefore(corsFilter(), AjaxLoginProcessingFilter::class.java)
     }
 
     private fun corsFilter(): CorsFilter {
@@ -109,7 +108,8 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     companion object {
         val JWT_TOKEN_HEADER_PARAM = "X-Authorization"
         val FORM_BASED_LOGIN_ENTRY_POINT = "/api/auth/login"
-        val TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**"
+        val FORM_BASED_SIGNUP_ENTRY_POINT = "/api/auth/signup"
         val TOKEN_REFRESH_ENTRY_POINT = "/api/auth/token"
+        val TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**"
     }
 }

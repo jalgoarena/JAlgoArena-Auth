@@ -2,7 +2,6 @@ package com.jalgoarena
 
 import com.jalgoarena.security.auth.JwtAuthenticationToken
 import com.jalgoarena.security.model.UserContext
-import io.jsonwebtoken.impl.crypto.MacProvider
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties

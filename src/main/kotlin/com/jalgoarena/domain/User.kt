@@ -8,11 +8,12 @@ import jetbrains.exodus.entitystore.Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class User(
         val username: String,
-        val password: String,
+        var password: String,
         val email: String,
         val region: String,
         val team: String,
-        val role: Role = Role.USER
+        val role: Role = Role.USER,
+        var id: String? = null
 ) {
     companion object {
         fun from(entity: Entity): User {
@@ -22,7 +23,8 @@ data class User(
                     entity.getProperty(Constants.email) as String,
                     entity.getProperty(Constants.region) as String,
                     entity.getProperty(Constants.team) as String,
-                    Role.valueOf(entity.getProperty(Constants.role) as String)
+                    Role.valueOf(entity.getProperty(Constants.role) as String),
+                    entity.id.toString()
             )
         }
     }

@@ -11,12 +11,30 @@ class UsersController {
     @Autowired
     lateinit var repository: UserDetailsRepository
 
-    @GetMapping("/users", produces = arrayOf("application/json"))
-    fun users(): List<User> = repository.findAll()
+    @GetMapping("/api/users", produces = arrayOf("application/json"))
+    fun users(): List<User> {
+        return repository.findAll().map { User(
+                it.username,
+                "",
+                it.email,
+                it.region,
+                it.team,
+                it.role,
+                it.id
+        ) }
+    }
 
-    @GetMapping("/users/{username}", produces = arrayOf("application/json"))
-    fun users(@PathVariable username: String) = repository.findByUsername(username)
+    @GetMapping("/api/users/{username}", produces = arrayOf("application/json"))
+    fun users(@PathVariable username: String): User? {
+        val user = repository.findByUsername(username)
 
-    @PostMapping("/signup", produces = arrayOf("application/json"))
+        if (user != null) {
+            user.password = ""
+        }
+
+        return user
+    }
+
+    @PostMapping("/api/auth/signup", produces = arrayOf("application/json"))
     fun signup(@RequestBody userDetails: User) = repository.addUser(userDetails)
 }

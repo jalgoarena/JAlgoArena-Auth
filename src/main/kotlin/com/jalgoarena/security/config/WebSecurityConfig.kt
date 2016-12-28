@@ -82,7 +82,6 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 .and()
                     .authorizeRequests()
                     .antMatchers(FORM_BASED_LOGIN_ENTRY_POINT).permitAll()
-                    .antMatchers(FORM_BASED_SIGNUP_ENTRY_POINT).permitAll()
                     .antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll()
                 .and()
                     .authorizeRequests()
@@ -108,7 +107,6 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     companion object {
         val JWT_TOKEN_HEADER_PARAM = "X-Authorization"
         val FORM_BASED_LOGIN_ENTRY_POINT = "/api/auth/login"
-        val FORM_BASED_SIGNUP_ENTRY_POINT = "/api/auth/signup"
         val TOKEN_REFRESH_ENTRY_POINT = "/api/auth/token"
         val TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**"
     }

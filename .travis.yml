@@ -11,10 +11,15 @@ cache:
   directories:
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/
+before_deploy:
+- ./gradlew releaseZip
 deploy:
-  provider: heroku
+  provider: releases
   api_key:
-    secure: sOaVuEhb9oQPKcodgASSiw6eqKJEnl7RLnRL/kLORJ2AHx6HxJy5Bvl0jPejMicJcb7Qo33EiGOCL9zn1nqFz6thQstQvrEPgRWV/6F8rrUzlh4L6AbXQXGoFhHE4V4rTKFTnIZbQRCID8yf6apvg8S+X9jHFTAHesaHeB9Gg+yQvY8kkyL9Ny7pYoaHEFvqfWKyW4ub34L6veteeYgPUD2BA5yLbILUKvSRLyv59ao45ZkkzYLxoP6TcG/Oz+9I1+uzl68O9qkRPGJvXPGhBZLI4xmD/doYG95H0W/3IFATKlqAyCFkhQunTq81kMh1qlMRqu+nrAd8LBilSD1NOGOdRsU6cFXZivYe7Zn3XBoaIoYCDE0EW/4Fu2Wl1uyhUtTfA6GiuzzcrAqFf5S2rqO/n/iB2XEnQDu03ESZumSbRGbvDlSHJcETQPTHc4O/V6552QEPtwEBbjEo9BesLV4fhpKubj8Jy1qY5bbIhFS3QpnU6kwPUV52x8uP9TshXsVA3pxPsOdm/f0naZ1xgVGF2nTw3IoI46T8py6VtTYWSDcw6SHc5z1/KIQ8juLymwl7pHqA+jRRkPDmLcUsCAk3rpg9xG9wGhtg0QnSbh9lWJ/+ggd8j4BHlogxQjy83uWVlOGeSEQsgvwmjjB+lzEs6m3HRx/7G6BwTwQUlzo=
-  app: jalgoarena-auth
+    secure: S0a3BsUrmCzssu+aPqKpkzqGvfCQDiSHevlYiW+jjLH/lOihYR6gPTEfiON4Xf0P/SMHuuAw2vCuC5Wc43wCME+rUeZ40nEhqTacFi4tulvEXATs4gZHX39wipih4TOqyG4EQSASILevAX2EZWTnVt0F9CuIQ8tJW0dNaw2LfBFuW/+KnlZQcyTrb72PLJng/FTHvx+cZl66EIr3QpZ7eWttUhDA7mvRhabOEl7UQwPqFErFmYvBRq6OydvbSrTne0ITFyYwNt0kz9mQtArhlEP8RbYmYX/Vh+1yW5dA7tU4ta5765Z3KGc9LeoEv60OKntmUbkqISOyb/TSqBvRzYWzLBDunBRA8ejbz0Xtoa8VnzhY/oU5fWaIINZ6Wiuq4aryfNgHPX1xIDIQehNmSe7CZxn5pd1jm/rHN3dE3C3iRdorOvdqnw+GSmvp30KqXXcnQlRHfZDihrI6sZ3ff92VlLsnVxjwXvtip2jKjeWupq3Uazz4s/RkyflvqIpvpoylwCxq1YX0F5NdUThyR0BHQvULjpwlnJZi6S/GynF+uEA6h+Wur2oUKDDjMEsjMxi3poBDuV9pTaXChrCC0d36/IlqDhbbUOrFXttq1fRApPN1lGQ+7OJ0gLa38tL5Vzm3PGhv58ldyBwdtIap4/d4wzgd84ooBY9LO7RMc0g=
+  file_glob: true
+  file: "./build/libs/JAlgoArena-Auth-*.zip"
+  skip_cleanup: true
   on:
     repo: spolnik/JAlgoArena-Auth
+    tags: true

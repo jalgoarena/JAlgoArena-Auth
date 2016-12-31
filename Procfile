@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar build/libs/jalgoarena-auth-1.0.jar  --spring.profiles.active=heroku
+web: java -jar build/libs/jalgoarena-auth-*.jar  --spring.profiles.active=heroku

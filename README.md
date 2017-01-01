@@ -18,6 +18,7 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 
 ## Components
 
+- [JAlgoArena](https://github.com/spolnik/JAlgoArena)
 - [JAlgoArena UI](https://github.com/spolnik/JAlgoArena-UI)
 - [JAlgoArena Submissions (and Ranking)](https://github.com/spolnik/JAlgoArena-Submissions)
 - [JAlgoArena Eureka Server](https://github.com/spolnik/JAlgoArena-Eureka)

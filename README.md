@@ -54,7 +54,6 @@ There are two ways to run it - from sources or from binaries.
 - there is second way to run app with gradle. Instead of running above, you can just run `./gradlew clean bootRun`
 
 ## Notes
-- [Running locally](https://github.com/spolnik/jalgoarena/wiki)
 - [Travis Builds](https://travis-ci.org/spolnik)
 
 ![Component Diagram](https://github.com/spolnik/JAlgoArena/raw/master/design/JAlgoArena_Logo.png)

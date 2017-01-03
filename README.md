@@ -6,6 +6,7 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 - [Components](#components)
 - [Continuous Delivery](#continuous-delivery)
 - [Infrastructure](#infrastructure)
+- [Running Locally] (#running-locally)
 - [Notes](#notes)
 
 ## Introduction
@@ -17,6 +18,7 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 
 ## Components
 
+- [JAlgoArena](https://github.com/spolnik/JAlgoArena)
 - [JAlgoArena UI](https://github.com/spolnik/JAlgoArena-UI)
 - [JAlgoArena Submissions (and Ranking)](https://github.com/spolnik/JAlgoArena-Submissions)
 - [JAlgoArena Eureka Server](https://github.com/spolnik/JAlgoArena-Eureka)
@@ -37,8 +39,22 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 - Spring Boot, Spring Cloud (Eureka Client)
 - TravisCI - https://travis-ci.org/spolnik/JAlgoArena-Auth
 
+## Running locally
+
+There are two ways to run it - from sources or from binaries.
+- Default port: `9999`
+
+### Running from binaries
+- go to [releases page](https://github.com/spolnik/JAlgoArena-Auth/releases) and download last app package (JAlgoArena-Auth-[version_number].zip)
+- after unpacking it, go to folder and run `./run.sh` (to make it runnable, invoke command `chmod +x run.sh`)
+- you can modify port and Eureka service url in run.sh script, depending on your infrastructure settings. The script itself can be found in here: [run.sh](run.sh)
+
+### Running from sources
+- run `git clone https://github.com/spolnik/JAlgoArena-Auth` to clone locally the sources
+- now, you can build project with command `./gradlew clean bootRepackage` which will create runnable jar package with app sources. Next, run `java -Dserver.port=9999 -jar build\libs\jalgoarena-auth-*.jar` which will start application
+- there is second way to run app with gradle. Instead of running above, you can just run `./gradlew clean bootRun`
+
 ## Notes
-- [Running locally](https://github.com/spolnik/jalgoarena/wiki)
 - [Travis Builds](https://travis-ci.org/spolnik)
 
 ![Component Diagram](https://github.com/spolnik/JAlgoArena/raw/master/design/JAlgoArena_Logo.png)

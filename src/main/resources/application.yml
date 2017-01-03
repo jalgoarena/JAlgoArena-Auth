@@ -10,9 +10,9 @@ server:
   port: ${PORT:9999}
 
 jalgoarena.security.jwt:
-  tokenExpirationTime: 15 # Number of minutes
-  refreshTokenExpTime: 60 # Minutes
-  tokenIssuer: http://jalgoarena.com
+  tokenExpirationTime: 43200 # Number of minutes
+  refreshTokenExpTime: 60000 # Minutes
+  tokenIssuer: jalgoarena.com
   tokenSigningKey: U9FdVDcRlKRV+WDzSOCmdeKkhR9MWANj1Ksti9GiXPdzgyL4LBGhFLvzDxOkJDg/JvD65s3rbcUda757Re4uAA==
 ---
 spring:

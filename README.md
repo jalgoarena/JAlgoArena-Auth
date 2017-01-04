@@ -1,4 +1,4 @@
-# JAlgoArena Auth [![Build Status](https://travis-ci.org/spolnik/JAlgoArena-Auth.svg?branch=master)](https://travis-ci.org/spolnik/JAlgoArena-Auth)
+# JAlgoArena Auth [![Build Status](https://travis-ci.org/spolnik/JAlgoArena-Auth.svg?branch=master)](https://travis-ci.org/spolnik/JAlgoArena-Auth) ![Component Diagram](https://github.com/spolnik/JAlgoArena/raw/master/design/component_diagram.png)
 
 JAlgoArena Auth is core service dedicated for authentication and authorization of the JAlgoArena users. It's keeping all data in Xodus DB, and for authorization it's using JWT tokens which are verified on the requests. Initial creation of accounts happens through AJAX requests.
 

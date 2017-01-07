@@ -48,7 +48,7 @@ class UsersControllerSpec {
     private lateinit var jwtAuthenticationProvider: JwtAuthenticationProvider
 
     @Test
-    fun returns_200_and_users_with_empty_password_and_email_for_get_users() {
+    fun get_users_returns_200_and_users_with_empty_password_and_email() {
         given(usersRepository.findAll()).willReturn(listOf(
                 USER_MIKOLAJ, USER_JULIA
         ))
@@ -67,7 +67,7 @@ class UsersControllerSpec {
     }
 
     @Test
-    fun returns_200_and_newly_created_user_for_post_signup() {
+    fun post_signup_returns_200_and_newly_created_user() {
         val userJuliaWithoutId = USER_JULIA.copy(id = null)
         given(usersRepository.addUser(userJuliaWithoutId)).willReturn(USER_JULIA)
 
@@ -80,27 +80,15 @@ class UsersControllerSpec {
     }
 
     @Test
-    fun returns_401_if_user_did_not_logged_in_for_get_api_user() {
+    fun get_api_user_returns_401_if_user_did_not_logged_in() {
         mockMvc.perform(get("/api/user")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized)
     }
 
     @Test
-    fun returns_200_and_user_details_if_user_is_logged_in_for_get_api_user() {
-        given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(USER_MIKOLAJ)
-
-        given(jwtAuthenticationProvider.supports(JwtAuthenticationToken::class.java)).willReturn(true)
-        val token = RawAccessJwtToken(JwtHeaderTokenExtractor().extract(DUMMY_TOKEN))
-        given(jwtAuthenticationProvider.authenticate(JwtAuthenticationToken(token))).willReturn(
-                JwtAuthenticationToken(
-                        UserContext(
-                            USER_MIKOLAJ.username,
-                            listOf(SimpleGrantedAuthority(Role.USER.authority()))
-                        ),
-                        listOf(SimpleGrantedAuthority(Role.USER.authority()))
-                )
-        )
+    fun get_api_user_returns_200_and_user_details_if_user_is_logged_in() {
+        givenLoggedInUser(USER_MIKOLAJ)
 
         mockMvc.perform(get("/api/user")
                 .header("X-Authorization", DUMMY_TOKEN)
@@ -115,10 +103,63 @@ class UsersControllerSpec {
                 .andExpect(jsonPath("$.id", `is`(USER_MIKOLAJ.id)))
     }
 
+    @Test
+    fun get_api_users_returns_401_if_user_did_not_logged_in() {
+        mockMvc.perform(get("/api/users")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun get_api_users_returns_401_if_user_is_non_admin() {
+        givenLoggedInUser(USER_MIKOLAJ)
+
+        mockMvc.perform(get("/api/users")
+                .header("X-Authorization", DUMMY_TOKEN)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun get_api_users_returns_200_and_all_users_for_admin() {
+        givenLoggedInUser(USER_ADMIN)
+
+        given(usersRepository.findAll()).willReturn(listOf(
+                USER_MIKOLAJ, USER_JULIA, USER_ADMIN
+        ))
+
+        mockMvc.perform(get("/api/users")
+                .header("X-Authorization", DUMMY_TOKEN)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$", hasSize<ArrayNode>(3)))
+                .andExpect(jsonPath("$[0].password", `is`("")))
+    }
+
+    private fun givenLoggedInUser(user: User) {
+        given(usersRepository.findByUsername(user.username)).willReturn(user)
+
+        given(jwtAuthenticationProvider.supports(JwtAuthenticationToken::class.java)).willReturn(true)
+        given(jwtAuthenticationProvider.authenticate(jwtAuthenticationToken())).willReturn(
+                JwtAuthenticationToken(
+                        UserContext(
+                                user.username,
+                                listOf(SimpleGrantedAuthority(user.role.authority()))
+                        ),
+                        listOf(SimpleGrantedAuthority(user.role.authority()))
+                )
+        )
+    }
+
+    private fun jwtAuthenticationToken() =
+            JwtAuthenticationToken(RawAccessJwtToken(JwtHeaderTokenExtractor().extract(DUMMY_TOKEN)))
+
     private val USER_MIKOLAJ =
             User("mikolaj", "password", "mikolaj@mail.com", "Kraków", "Tyniec Team", Role.USER, "0-0")
     private val USER_JULIA =
             User("julia", "password1", "julia@mail.com", "Kraków", "Tyniec Team", Role.USER, "0-1")
+    private val USER_ADMIN =
+            User("admin", "password2", "admin@mail.com", "Kraków", "Tyniec Team", Role.ADMIN, "0-2")
 
     private val DUMMY_TOKEN = "Bearer 123j12n31lkmdp012j21d"
 

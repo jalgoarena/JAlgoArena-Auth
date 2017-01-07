@@ -28,11 +28,9 @@ open class AjaxAwareAuthenticationSuccessHandler(
         val userContext = authentication.principal as UserContext
 
         val (token) = tokenFactory.createAccessJwtToken(userContext)
-        val refreshToken = tokenFactory.createRefreshToken(userContext)
 
         val tokenMap = mapOf(
-                Pair("token", token),
-                Pair("refreshToken", refreshToken.token)
+                Pair("token", token)
         )
 
         response.status = HttpStatus.OK.value()

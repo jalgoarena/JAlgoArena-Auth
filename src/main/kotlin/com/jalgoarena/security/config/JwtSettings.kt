@@ -21,9 +21,4 @@ open class JwtSettings {
      * Key is used to sign [JwtToken].
      */
     var tokenSigningKey: String? = null
-
-    /**
-     * [JwtToken] can be refreshed during this timeframe.
-     */
-    var refreshTokenExpTime: Int? = null
 }

@@ -1,14 +1,12 @@
 package com.jalgoarena.security.model.token
 
 import com.jalgoarena.security.config.JwtSettings
-import com.jalgoarena.security.model.Scopes
 import com.jalgoarena.security.model.UserContext
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.apache.commons.lang.StringUtils
 import org.joda.time.DateTime
 import org.springframework.stereotype.Component
-import java.util.*
 import javax.inject.Inject
 
 @Component
@@ -31,28 +29,6 @@ open class JwtTokenFactory(@Inject private val settings: JwtSettings) {
                 .setIssuer(settings.tokenIssuer)
                 .setIssuedAt(currentTime.toDate())
                 .setExpiration(currentTime.plusMinutes(settings.tokenExpirationTime!!).toDate())
-                .signWith(SignatureAlgorithm.HS512, settings.tokenSigningKey)
-                .compact()
-
-        return AccessJwtToken(token, claims)
-    }
-
-    fun createRefreshToken(userContext: UserContext): JwtToken {
-        if (StringUtils.isBlank(userContext.username)) {
-            throw IllegalArgumentException("Cannot create JWT Token without username")
-        }
-
-        val currentTime = DateTime()
-
-        val claims = Jwts.claims().setSubject(userContext.username)
-        claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.authority()))
-
-        val token = Jwts.builder()
-                .setClaims(claims)
-                .setIssuer(settings.tokenIssuer)
-                .setId(UUID.randomUUID().toString())
-                .setIssuedAt(currentTime.toDate())
-                .setExpiration(currentTime.plusMinutes(settings.refreshTokenExpTime!!).toDate())
                 .signWith(SignatureAlgorithm.HS512, settings.tokenSigningKey)
                 .compact()
 

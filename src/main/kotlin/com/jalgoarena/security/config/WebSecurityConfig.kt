@@ -49,7 +49,7 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Bean
     open fun buildJwtTokenAuthenticationProcessingFilter(): JwtTokenAuthenticationProcessingFilter {
-        val pathsToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT)
+        val pathsToSkip = Arrays.asList(FORM_BASED_LOGIN_ENTRY_POINT)
         val matcher = SkipPathRequestMatcher(pathsToSkip, TOKEN_BASED_AUTH_ENTRY_POINT)
         val filter = JwtTokenAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher)
         filter.setAuthenticationManager(this.authenticationManager)
@@ -82,8 +82,7 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 .and()
                     .authorizeRequests()
                     .antMatchers(FORM_BASED_LOGIN_ENTRY_POINT).permitAll()
-                    .antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll()
-                    .antMatchers(API_USERS_ENTRY_POINT).hasRole("ADMIN")
+                    .antMatchers(API_USERS_ENTRY_POINT).hasRole(ADMIN_ROLE)
                 .and()
                     .authorizeRequests()
                     .antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated()
@@ -108,8 +107,8 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     companion object {
         val JWT_TOKEN_HEADER_PARAM = "X-Authorization"
         val FORM_BASED_LOGIN_ENTRY_POINT = "/api/auth/login"
-        val TOKEN_REFRESH_ENTRY_POINT = "/api/auth/token"
         val API_USERS_ENTRY_POINT = "/api/users"
         val TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**"
+        val ADMIN_ROLE = "ADMIN"
     }
 }

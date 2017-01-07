@@ -1,7 +1,6 @@
 package com.jalgoarena.security.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.jalgoarena.security.RestAuthenticationEntryPoint
 import com.jalgoarena.security.auth.ajax.AjaxAuthenticationProvider
 import com.jalgoarena.security.auth.ajax.AjaxLoginProcessingFilter
 import com.jalgoarena.security.auth.jwt.JwtAuthenticationProvider
@@ -31,7 +30,6 @@ import java.util.*
 @EnableWebSecurity
 open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
-    @Autowired private lateinit var authenticationEntryPoint: RestAuthenticationEntryPoint
     @Autowired private lateinit var successHandler: AuthenticationSuccessHandler
     @Autowired private lateinit var failureHandler: AuthenticationFailureHandler
     @Autowired private lateinit var ajaxAuthenticationProvider: AjaxAuthenticationProvider
@@ -75,7 +73,6 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
         http
                 .csrf().disable()
                 .exceptionHandling()
-                .authenticationEntryPoint(this.authenticationEntryPoint)
                 .and()
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

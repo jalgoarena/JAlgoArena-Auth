@@ -6,36 +6,35 @@ import jetbrains.exodus.entitystore.PersistentEntityStore
 import jetbrains.exodus.entitystore.PersistentEntityStores
 import jetbrains.exodus.entitystore.PersistentStoreTransaction
 import org.slf4j.LoggerFactory
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Repository
-import javax.annotation.PreDestroy
 
 @Repository
-class UserDetailsRepository(dbName: String) {
+class XodusUsersRepository(dbName: String) : UsersRepository {
 
     constructor() : this(Constants.storePath)
 
     private val LOG = LoggerFactory.getLogger(this.javaClass)
     private val store: PersistentEntityStore = PersistentEntityStores.newInstance(dbName)
 
-    fun findAll(): List<User> {
+    override fun findAll(): List<User> {
         return readonly {
             it.getAll(Constants.entityType).map { User.from(it) }
         }
     }
 
-    fun findByUsername(username: String): User? {
+    override fun findByUsername(username: String): User {
         return readonly {
             it.find(
                     Constants.entityType,
                     Constants.username,
                     username
             ).map { User.from(it) }.firstOrNull()
-        }
+        } ?: throw UsernameNotFoundException("User not found: $username")
     }
 
-    @PreDestroy
-    fun destroy() {
+    override fun destroy() {
         var proceed = true
         var count = 1
         while (proceed && count <= 10) {
@@ -52,14 +51,14 @@ class UserDetailsRepository(dbName: String) {
     }
 
     private fun <T> transactional(call: (PersistentStoreTransaction) -> T): T {
-        return transactional(store, call)
+        return store.computeInTransaction { call(it as PersistentStoreTransaction) }
     }
 
     private fun <T> readonly(call: (PersistentStoreTransaction) -> T): T {
-        return readonly(store, call)
+        return store.computeInReadonlyTransaction { call(it as PersistentStoreTransaction) }
     }
 
-    fun addUser(user: User): User {
+    override fun addUser(user: User): User {
         return transactional {
             checkIfUsernameOrEmailIsAlreadyUsed(it, user)
 
@@ -90,12 +89,4 @@ class UserDetailsRepository(dbName: String) {
         if (emailAlreadyUsed != null)
             throw EmailIsAlreadyUsedException()
     }
-}
-
-fun <T> transactional(store: PersistentEntityStore, call: (PersistentStoreTransaction) -> T): T {
-    return store.computeInTransaction { call(it as PersistentStoreTransaction) }
-}
-
-fun <T> readonly(store: PersistentEntityStore, call: (PersistentStoreTransaction) -> T): T {
-    return store.computeInReadonlyTransaction { call(it as PersistentStoreTransaction) }
 }

@@ -1,6 +1,6 @@
 package com.jalgoarena.security.endpoint
 
-import com.jalgoarena.security.UserService
+import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.security.auth.jwt.extractor.TokenExtractor
 import com.jalgoarena.security.auth.jwt.verifier.TokenVerifier
 import com.jalgoarena.security.config.JwtSettings
@@ -14,7 +14,6 @@ import com.jalgoarena.security.model.token.RefreshToken
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
@@ -26,7 +25,7 @@ import javax.servlet.http.HttpServletResponse
 class RefreshTokenEndpoint {
     @Inject lateinit private var tokenFactory: JwtTokenFactory
     @Inject lateinit private var jwtSettings: JwtSettings
-    @Inject lateinit private var userService: UserService
+    @Inject lateinit private var usersRepository: UsersRepository
     @Inject lateinit private var tokenVerifier: TokenVerifier
     @Inject lateinit @Qualifier("jwtHeaderTokenExtractor") private var tokenExtractor: TokenExtractor
 
@@ -45,8 +44,7 @@ class RefreshTokenEndpoint {
         }
 
         val subject = refreshToken.subject()
-        val user = userService.findByUsername(subject) ?:
-                throw UsernameNotFoundException("User not found: $subject")
+        val user = usersRepository.findByUsername(subject)
 
         val authorities = arrayOf(user.role)
                 .map({ authority -> SimpleGrantedAuthority(authority.authority()) })

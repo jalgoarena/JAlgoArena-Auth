@@ -1,6 +1,6 @@
 package com.jalgoarena.security.auth.ajax
 
-import com.jalgoarena.DatabaseUserService
+import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.security.model.UserContext
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @Component
 open class AjaxAuthenticationProvider(
-        @Inject private val userService: DatabaseUserService,
+        @Inject private val usersRepository : UsersRepository,
         @Inject private val encoder: BCryptPasswordEncoder
 ) : AuthenticationProvider {
 
@@ -21,7 +21,7 @@ open class AjaxAuthenticationProvider(
         val username = authentication.principal as String
         val password = authentication.credentials as String
 
-        val user = userService.findByUsername(username)
+        val user = usersRepository.findByUsername(username)
 
         if (!encoder.matches(password, user.password)) {
             throw BadCredentialsException("Authentication Failed. Username or Password not valid.")

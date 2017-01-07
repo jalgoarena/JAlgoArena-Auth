@@ -1,17 +1,19 @@
 package com.jalgoarena.web
 
-import com.jalgoarena.data.UserDetailsRepository
+import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
 import com.jalgoarena.security.auth.JwtAuthenticationToken
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.*
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
+import javax.inject.Inject
 
 @RestController
-class UsersController {
-
-    @Autowired
-    lateinit var repository: UserDetailsRepository
+class UsersController(@Inject private val repository: UsersRepository) {
 
     @GetMapping("/users", produces = arrayOf("application/json"))
     fun publicUsers(): List<User> {
@@ -40,16 +42,11 @@ class UsersController {
     }
 
     @GetMapping("/api/user", produces = arrayOf("application/json"))
-    fun user(token: JwtAuthenticationToken): User? {
-        val user = repository.findByUsername(token.principal!!.username)
-
-        if (user != null) {
-            user.password = ""
-        }
-
-        return user
+    fun user(token: JwtAuthenticationToken) = repository.findByUsername(token.principal!!.username).apply {
+        password = ""
     }
 
     @PostMapping("/signup", produces = arrayOf("application/json"))
-    fun signup(@RequestBody userDetails: User) = repository.addUser(userDetails)
+    fun signup(@RequestBody user: User) =
+            ResponseEntity(repository.addUser(user), HttpStatus.CREATED)
 }

@@ -1,8 +1,6 @@
 package com.jalgoarena
 
-import com.jalgoarena.data.EmailIsAlreadyUsedException
-import com.jalgoarena.data.UserDetailsRepository
-import com.jalgoarena.data.UsernameIsAlreadyUsedException
+import com.jalgoarena.data.*
 import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
 import com.winterbe.expekt.should
@@ -15,12 +13,12 @@ class AccountRepositorySpec {
 
     companion object {
         val dbName = "./UserDetailsStoreForTests"
-        var repository: UserDetailsRepository
+        var repository: UsersRepository
 
         init {
             val store = PersistentEntityStores.newInstance(dbName)
             store.close()
-            repository = UserDetailsRepository(dbName)
+            repository = XodusUsersRepository(dbName)
         }
 
         @AfterClass
@@ -42,14 +40,14 @@ class AccountRepositorySpec {
     @Test
     fun should_return_user_for_given_username() {
         repository.addUser(sampleUser("Madzia", "madzia@mail.com"))
-        val user = repository.findByUsername("Madzia")!!
+        val user = repository.findByUsername("Madzia")
         user.email.should.equal("madzia@mail.com")
     }
 
     @Test
     fun should_set_user_as_default_role() {
         repository.addUser(sampleUser("Madzia3", "madzia3@mail.com"))
-        val user = repository.findByUsername("Madzia3")!!
+        val user = repository.findByUsername("Madzia3")
         user.role.should.equal(Role.USER)
     }
 

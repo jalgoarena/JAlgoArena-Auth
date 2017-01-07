@@ -1,18 +1,18 @@
 package com.jalgoarena.utils
 
-import com.jalgoarena.data.UserDetailsRepository
+import com.jalgoarena.data.XodusUsersRepository
 import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
 
-class UserDetailsStoreSetup() {
+class UserDetailsStoreSetup {
 
     fun createDb() {
 
-        val repository = UserDetailsRepository()
+        val repository = XodusUsersRepository()
         try {
             repository.addUser(User(
                     username = "admin",
-                    password = "123123",
+                    password = "<password>",
                     email = "admin@mail.com",
                     region = "Krakow",
                     team = "Admins",

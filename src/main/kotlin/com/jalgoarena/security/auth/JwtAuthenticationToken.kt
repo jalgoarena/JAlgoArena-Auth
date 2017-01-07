@@ -41,4 +41,22 @@ class JwtAuthenticationToken : AbstractAuthenticationToken {
         super.eraseCredentials()
         this.rawAccessToken = null
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as JwtAuthenticationToken
+
+        if (rawAccessToken != other.rawAccessToken) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + (rawAccessToken?.hashCode() ?: 0)
+        return result
+    }
 }

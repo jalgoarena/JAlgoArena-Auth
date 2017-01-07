@@ -1,6 +1,5 @@
-package com.jalgoarena
+package com.jalgoarena.data
 
-import com.jalgoarena.data.*
 import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
 import jetbrains.exodus.entitystore.PersistentEntityStores
@@ -9,7 +8,7 @@ import org.junit.AfterClass
 import org.junit.Test
 import java.io.File
 
-class AccountRepositorySpec {
+class UsersRepositorySpec {
 
     companion object {
         val dbName = "./UserDetailsStoreForTests"

@@ -5,7 +5,7 @@ import io.jsonwebtoken.*
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.BadCredentialsException
 
-class RawAccessJwtToken(override val token: String) : JwtToken {
+data class RawAccessJwtToken(override val token: String) : JwtToken {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
 

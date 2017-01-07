@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.jalgoarena.security.exceptions.AuthMethodNotSupportedException
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.AuthenticationServiceException
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.context.SecurityContextHolder
@@ -31,7 +30,7 @@ class AjaxLoginProcessingFilter(
         validateHttpMethod(request)
 
         val (username, password) = parseLoginRequest(request)
-        val token = UsernamePasswordAuthenticationToken(username, password)
+        val token = AjaxAuthenticationToken(username, password)
 
         return this.authenticationManager.authenticate(token)
     }

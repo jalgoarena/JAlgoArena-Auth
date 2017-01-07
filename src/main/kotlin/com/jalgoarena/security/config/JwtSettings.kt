@@ -6,9 +6,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 @ConfigurationProperties(prefix = "jalgoarena.security.jwt")
 open class JwtSettings {
-    var tokenExpirationTime: Int? = null
-
-    var tokenIssuer: String? = null
-
-    var tokenSigningKey: String? = null
+    open var tokenExpirationTime: Int? = null
+    open var tokenIssuer: String? = null
+    open var tokenSigningKey: String? = null
 }

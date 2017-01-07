@@ -7,7 +7,6 @@ import com.jalgoarena.security.auth.jwt.JwtAuthenticationProvider
 import com.jalgoarena.security.auth.jwt.JwtTokenAuthenticationProcessingFilter
 import com.jalgoarena.security.auth.jwt.SkipPathRequestMatcher
 import com.jalgoarena.security.auth.jwt.extractor.TokenExtractor
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -24,19 +23,19 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
 import java.util.*
-
+import javax.inject.Inject
 
 @Configuration
 @EnableWebSecurity
 open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
-    @Autowired private lateinit var successHandler: AuthenticationSuccessHandler
-    @Autowired private lateinit var failureHandler: AuthenticationFailureHandler
-    @Autowired private lateinit var ajaxAuthenticationProvider: AjaxAuthenticationProvider
-    @Autowired private lateinit var jwtAuthenticationProvider: JwtAuthenticationProvider
-    @Autowired private lateinit var tokenExtractor: TokenExtractor
-    @Autowired private lateinit var authenticationManager: AuthenticationManager
-    @Autowired private lateinit var objectMapper: ObjectMapper
+    @Inject private lateinit var successHandler: AuthenticationSuccessHandler
+    @Inject private lateinit var failureHandler: AuthenticationFailureHandler
+    @Inject private lateinit var ajaxAuthenticationProvider: AjaxAuthenticationProvider
+    @Inject private lateinit var jwtAuthenticationProvider: JwtAuthenticationProvider
+    @Inject private lateinit var tokenExtractor: TokenExtractor
+    @Inject private lateinit var authenticationManager: AuthenticationManager
+    @Inject private lateinit var objectMapper: ObjectMapper
 
     @Bean
     open fun buildAjaxLoginProcessingFilter(): AjaxLoginProcessingFilter {

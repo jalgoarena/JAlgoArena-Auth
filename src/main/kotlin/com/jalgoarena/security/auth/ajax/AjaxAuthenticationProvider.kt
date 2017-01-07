@@ -4,7 +4,6 @@ import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.security.model.UserContext
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -32,9 +31,9 @@ open class AjaxAuthenticationProvider(
 
         val userContext = UserContext.create(user.username, authorities)
 
-        return UsernamePasswordAuthenticationToken(userContext, null, userContext.authorities)
+        return AjaxAuthenticationToken(userContext, null, userContext.authorities)
     }
 
     override fun supports(authentication: Class<*>) =
-            UsernamePasswordAuthenticationToken::class.java.isAssignableFrom(authentication)
+            AjaxAuthenticationToken::class.java.isAssignableFrom(authentication)
 }

@@ -18,10 +18,12 @@ import javax.servlet.http.HttpServletResponse
 
 class AjaxLoginProcessingFilter(
         defaultProcessUrl: String,
-        private val authenticationSuccessHandler: AuthenticationSuccessHandler,
-        private val authenticationFailureHandler: AuthenticationFailureHandler,
+        authenticationSuccessHandler: AuthenticationSuccessHandler,
+        authenticationFailureHandler: AuthenticationFailureHandler,
         private val objectMapper: ObjectMapper
-) : AbstractAuthenticationProcessingFilter(defaultProcessUrl) {
+) : AbstractAuthenticationProcessingFilter(defaultProcessUrl),
+    AuthenticationSuccessHandler by authenticationSuccessHandler,
+    AuthenticationFailureHandler by authenticationFailureHandler {
 
     private val LOG = LoggerFactory.getLogger(this.javaClass)
 
@@ -62,7 +64,7 @@ class AjaxLoginProcessingFilter(
             chain: FilterChain,
             authResult: Authentication
     ) {
-        authenticationSuccessHandler.onAuthenticationSuccess(request, response, authResult)
+        onAuthenticationSuccess(request, response, authResult)
     }
 
     override fun unsuccessfulAuthentication(
@@ -71,6 +73,6 @@ class AjaxLoginProcessingFilter(
             failed: AuthenticationException
     ) {
         SecurityContextHolder.clearContext()
-        authenticationFailureHandler.onAuthenticationFailure(request, response, failed)
+        onAuthenticationFailure(request, response, failed)
     }
 }

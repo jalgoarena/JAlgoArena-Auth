@@ -30,38 +30,54 @@ open class AjaxAwareAuthenticationFailureHandler(
         response.contentType = MediaType.APPLICATION_JSON_VALUE
 
         when (e) {
-            is BadCredentialsException, is UsernameNotFoundException -> mapper.writeValue(
-                    response.writer,
-                    ErrorResponse(
-                            "Invalid username or password",
-                            ErrorCode.AUTHENTICATION,
-                            HttpStatus.UNAUTHORIZED
-                    )
-            )
-            is JwtExpiredTokenException -> mapper.writeValue(
-                    response.writer,
-                    ErrorResponse(
-                            "Token has expired",
-                            ErrorCode.JWT_TOKEN_EXPIRED,
-                            HttpStatus.UNAUTHORIZED
-                    )
-            )
-            is AuthMethodNotSupportedException -> mapper.writeValue(
-                    response.writer,
-                    ErrorResponse(
-                            e.message!!,
-                            ErrorCode.AUTHENTICATION,
-                            HttpStatus.UNAUTHORIZED
-                    )
-            )
-            else -> mapper.writeValue(
-                    response.writer,
-                    ErrorResponse(
-                            "Authentication failed",
-                            ErrorCode.AUTHENTICATION,
-                            HttpStatus.UNAUTHORIZED
-                    )
-            )
+            is BadCredentialsException, is UsernameNotFoundException -> invalidUserNameOrPassword(response)
+            is JwtExpiredTokenException -> tokenHasExpired(response)
+            is AuthMethodNotSupportedException -> authMethodNotSupported(e, response)
+            else -> authenticationFailed(response)
         }
+    }
+
+    private fun authenticationFailed(response: HttpServletResponse) {
+        mapper.writeValue(
+                response.writer,
+                ErrorResponse(
+                        "Authentication failed",
+                        ErrorCode.AUTHENTICATION,
+                        HttpStatus.UNAUTHORIZED
+                )
+        )
+    }
+
+    private fun authMethodNotSupported(e: AuthenticationException, response: HttpServletResponse) {
+        mapper.writeValue(
+                response.writer,
+                ErrorResponse(
+                        e.message!!,
+                        ErrorCode.AUTHENTICATION,
+                        HttpStatus.UNAUTHORIZED
+                )
+        )
+    }
+
+    private fun tokenHasExpired(response: HttpServletResponse) {
+        mapper.writeValue(
+                response.writer,
+                ErrorResponse(
+                        "Token has expired",
+                        ErrorCode.JWT_TOKEN_EXPIRED,
+                        HttpStatus.UNAUTHORIZED
+                )
+        )
+    }
+
+    private fun invalidUserNameOrPassword(response: HttpServletResponse) {
+        mapper.writeValue(
+                response.writer,
+                ErrorResponse(
+                        "Invalid username or password",
+                        ErrorCode.AUTHENTICATION,
+                        HttpStatus.UNAUTHORIZED
+                )
+        )
     }
 }

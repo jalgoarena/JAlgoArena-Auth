@@ -15,28 +15,41 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class JwtTokenAuthenticationProcessingFilter
-@Autowired
-constructor(private val authenticationFailureHandler: AuthenticationFailureHandler,
-            private val tokenExtractor: TokenExtractor, matcher: RequestMatcher) : AbstractAuthenticationProcessingFilter(matcher) {
+class JwtTokenAuthenticationProcessingFilter @Autowired constructor(
+        authenticationFailureHandler: AuthenticationFailureHandler,
+        tokenExtractor: TokenExtractor,
+        matcher: RequestMatcher
+) : AbstractAuthenticationProcessingFilter(matcher),
+        TokenExtractor by tokenExtractor,
+        AuthenticationFailureHandler by authenticationFailureHandler {
 
-    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
+    override fun attemptAuthentication(
+            request: HttpServletRequest,
+            response: HttpServletResponse
+    ): Authentication {
         val tokenPayload: String? = request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM)
-        val token = RawAccessJwtToken(tokenExtractor.extract(tokenPayload))
+        val token = RawAccessJwtToken(extract(tokenPayload))
         return authenticationManager.authenticate(JwtAuthenticationToken(token))
     }
 
-    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain?,
-                                          authResult: Authentication) {
+    override fun successfulAuthentication(
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            chain: FilterChain?,
+            authResult: Authentication
+    ) {
         val context = SecurityContextHolder.createEmptyContext()
         context.authentication = authResult
         SecurityContextHolder.setContext(context)
         chain!!.doFilter(request, response)
     }
 
-    override fun unsuccessfulAuthentication(request: HttpServletRequest, response: HttpServletResponse,
-                                            failed: AuthenticationException) {
+    override fun unsuccessfulAuthentication(
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            failed: AuthenticationException
+    ) {
         SecurityContextHolder.clearContext()
-        authenticationFailureHandler.onAuthenticationFailure(request, response, failed)
+        onAuthenticationFailure(request, response, failed)
     }
 }

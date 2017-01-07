@@ -29,9 +29,7 @@ open class AjaxAwareAuthenticationSuccessHandler(
 
         val (token) = tokenFactory.createAccessJwtToken(userContext)
 
-        val tokenMap = mapOf(
-                Pair("token", token)
-        )
+        val tokenMap = mapOf(Pair("token", token))
 
         response.status = HttpStatus.OK.value()
         response.contentType = MediaType.APPLICATION_JSON_VALUE

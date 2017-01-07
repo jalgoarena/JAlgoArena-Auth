@@ -3,8 +3,8 @@ package com.jalgoarena
 import com.jalgoarena.data.*
 import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
-import com.winterbe.expekt.should
 import jetbrains.exodus.entitystore.PersistentEntityStores
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.AfterClass
 import org.junit.Test
 import java.io.File
@@ -30,39 +30,39 @@ class AccountRepositorySpec {
 
     @Test
     fun should_return_all_available_users() {
-        repository.addUser(sampleUser("Mikolaj", "mikolaj@mail.com"))
-        repository.addUser(sampleUser("Julia", "julia@mail.com"))
+        repository.addUser(user("Mikolaj", "mikolaj@mail.com"))
+        repository.addUser(user("Julia", "julia@mail.com"))
 
         val users = repository.findAll()
-        users.should.have.size.least(2)
+        assertThat(users).size().isGreaterThanOrEqualTo(2)
     }
 
     @Test
     fun should_return_user_for_given_username() {
-        repository.addUser(sampleUser("Madzia", "madzia@mail.com"))
+        repository.addUser(user("Madzia", "madzia@mail.com"))
         val user = repository.findByUsername("Madzia")
-        user.email.should.equal("madzia@mail.com")
+        assertThat(user.email).isEqualTo("madzia@mail.com")
     }
 
     @Test
     fun should_set_user_as_default_role() {
-        repository.addUser(sampleUser("Madzia3", "madzia3@mail.com"))
+        repository.addUser(user("Madzia3", "madzia3@mail.com"))
         val user = repository.findByUsername("Madzia3")
-        user.role.should.equal(Role.USER)
+        assertThat(user.role).isEqualTo(Role.USER)
     }
 
     @Test(expected = UsernameIsAlreadyUsedException::class)
     fun throws_exception_if_there_is_user_with_same_username() {
-        repository.addUser(sampleUser("Jacek", "jacek@mail.com"))
-        repository.addUser(sampleUser("Jacek", "jacek2@mail.com"))
+        repository.addUser(user("Jacek", "jacek@mail.com"))
+        repository.addUser(user("Jacek", "jacek2@mail.com"))
     }
 
     @Test(expected = EmailIsAlreadyUsedException::class)
     fun throws_exception_if_there_is_user_with_same_email() {
-        repository.addUser(sampleUser("Jacek", "jacek@mail.com"))
-        repository.addUser(sampleUser("Jacek2", "jacek@mail.com"))
+        repository.addUser(user("Jacek", "jacek@mail.com"))
+        repository.addUser(user("Jacek2", "jacek@mail.com"))
     }
 
-    private val sampleUser =
-            { username: String, email: String -> User(username, "blabla", email, "PL", "Team A") }
+    private fun user(username: String, email: String)  =
+            User(username, "blabla", email, "PL", "Team A")
 }

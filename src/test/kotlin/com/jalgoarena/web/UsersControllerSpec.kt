@@ -75,6 +75,7 @@ class UsersControllerSpec {
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("$.username", `is`(USER_JULIA.username)))
                 .andExpect(jsonPath("$.id", `is`(USER_JULIA.id)))
+                .andExpect(jsonPath("$.password", `is`("")))
     }
 
     @Test

@@ -48,5 +48,5 @@ class UsersController(@Inject private val repository: UsersRepository) {
 
     @PostMapping("/signup", produces = arrayOf("application/json"))
     fun signup(@RequestBody user: User) =
-            ResponseEntity(repository.addUser(user), HttpStatus.CREATED)
+            ResponseEntity(repository.addUser(user).copy(password = ""), HttpStatus.CREATED)
 }

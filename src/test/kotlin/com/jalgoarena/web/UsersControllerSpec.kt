@@ -75,7 +75,7 @@ class UsersControllerSpec {
         val userJuliaWithoutId = USER_JULIA.copy(id = null)
         given(usersRepository.addUser(userJuliaWithoutId)).willReturn(USER_JULIA)
 
-        mockMvc.perform(post("/signup")
+        mockMvc.perform(post("/api/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(USER_JULIA_JSON))
                 .andExpect(status().isCreated)
@@ -144,7 +144,7 @@ class UsersControllerSpec {
     fun post_api_auth_login_returns_200_and_token_after_successful_login() {
         givenPredefinedUserCredentials()
 
-        mockMvc.perform(post("/api/auth/login")
+        mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(LOGIN_REQUEST_MIKOLAJ))
                 .andExpect(status().isOk)

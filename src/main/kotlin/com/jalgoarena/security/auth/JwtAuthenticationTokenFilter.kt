@@ -1,8 +1,8 @@
-package com.jalgoarena.security.auth.jwt
+package com.jalgoarena.security.auth
 
-import com.jalgoarena.security.auth.JwtAuthenticationToken
 import com.jalgoarena.security.config.WebSecurityConfig
-import com.jalgoarena.security.model.token.RawAccessJwtToken
+import com.jalgoarena.security.token.JwtAuthenticationToken
+import com.jalgoarena.security.token.RawAccessJwtToken
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -12,7 +12,7 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class JwtTokenAuthenticationProcessingFilter(matcher: RequestMatcher)
+class JwtAuthenticationTokenFilter(matcher: RequestMatcher)
     : AbstractAuthenticationProcessingFilter(matcher) {
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {

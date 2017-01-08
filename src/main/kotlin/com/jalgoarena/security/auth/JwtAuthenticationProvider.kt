@@ -1,12 +1,12 @@
-package com.jalgoarena.security.auth.jwt
+package com.jalgoarena.security.auth
 
-import com.jalgoarena.security.auth.JwtAuthenticationToken
 import com.jalgoarena.security.config.JwtSettings
-import com.jalgoarena.security.model.UserContext
-import com.jalgoarena.security.model.token.RawAccessJwtToken
+import com.jalgoarena.security.token.JwtAuthenticationToken
+import com.jalgoarena.security.token.RawAccessJwtToken
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
 import java.util.*
 import javax.inject.Inject
@@ -26,9 +26,8 @@ open class JwtAuthenticationProvider(
             SimpleGrantedAuthority(authority as String)
         }
 
-        val context = UserContext.create(subject, authorities)
-
-        return JwtAuthenticationToken(context, context.authorities)
+        val user = User(subject, "", authorities)
+        return JwtAuthenticationToken(user, user.authorities)
     }
 
     override fun supports(authentication: Class<*>): Boolean {

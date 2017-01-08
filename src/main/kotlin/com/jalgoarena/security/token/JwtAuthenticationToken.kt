@@ -1,23 +1,22 @@
-package com.jalgoarena.security.auth
+package com.jalgoarena.security.token
 
-import com.jalgoarena.security.model.UserContext
-import com.jalgoarena.security.model.token.RawAccessJwtToken
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 
 class JwtAuthenticationToken : AbstractAuthenticationToken {
 
     private var rawAccessToken: RawAccessJwtToken? = null
-    private var userContext: UserContext? = null
+    private var userDetails: UserDetails? = null
 
     constructor(unsafeToken: RawAccessJwtToken) : super(null) {
         this.rawAccessToken = unsafeToken
         this.isAuthenticated = false
     }
 
-    constructor(userContext: UserContext, authorities: Collection<GrantedAuthority>) : super(authorities) {
+    constructor(userDetails: UserDetails, authorities: Collection<GrantedAuthority>) : super(authorities) {
         this.eraseCredentials()
-        this.userContext = userContext
+        this.userDetails = userDetails
         super.setAuthenticated(true)
     }
 
@@ -33,8 +32,8 @@ class JwtAuthenticationToken : AbstractAuthenticationToken {
         return rawAccessToken
     }
 
-    override fun getPrincipal(): UserContext? {
-        return userContext
+    override fun getPrincipal(): UserDetails? {
+        return userDetails
     }
 
     override fun eraseCredentials() {

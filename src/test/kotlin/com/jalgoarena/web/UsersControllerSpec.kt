@@ -4,13 +4,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
-import com.jalgoarena.security.auth.JwtAuthenticationToken
-import com.jalgoarena.security.auth.ajax.AjaxAuthenticationProvider
-import com.jalgoarena.security.auth.ajax.AjaxAuthenticationToken
-import com.jalgoarena.security.auth.jwt.JwtAuthenticationProvider
+import com.jalgoarena.security.auth.JwtAuthenticationProvider
+import com.jalgoarena.security.token.JwtAuthenticationToken
 import com.jalgoarena.security.config.JwtSettings
-import com.jalgoarena.security.model.UserContext
-import com.jalgoarena.security.model.token.RawAccessJwtToken
+import com.jalgoarena.security.token.RawAccessJwtToken
 import org.hamcrest.Matchers.*
 import org.intellij.lang.annotations.Language
 import org.junit.Test
@@ -22,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -40,9 +38,6 @@ class UsersControllerSpec {
 
     @MockBean
     private lateinit var usersRepository: UsersRepository
-
-    @MockBean
-    private lateinit var ajaxAuthenticationProvider: AjaxAuthenticationProvider
 
     @MockBean
     private lateinit var jwtAuthenticationProvider: JwtAuthenticationProvider
@@ -74,7 +69,7 @@ class UsersControllerSpec {
         val userJuliaWithoutId = USER_JULIA.copy(id = null)
         given(usersRepository.addUser(userJuliaWithoutId)).willReturn(USER_JULIA)
 
-        mockMvc.perform(post("/api/signup")
+        mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(USER_JULIA_JSON))
                 .andExpect(status().isCreated)
@@ -141,25 +136,16 @@ class UsersControllerSpec {
 
     @Test
     fun post_api_auth_login_returns_200_and_token_after_successful_login() {
-        givenPredefinedUserCredentials()
+        given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
+                USER_MIKOLAJ.copy(password = BCryptPasswordEncoder().encode(USER_MIKOLAJ.password))
+        )
+        givenJwtSettings()
 
-        mockMvc.perform(post("/api/login")
+        mockMvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(LOGIN_REQUEST_MIKOLAJ))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.token", notNullValue()))
-    }
-
-    private fun givenPredefinedUserCredentials() {
-        given(ajaxAuthenticationProvider.supports(AjaxAuthenticationToken::class.java)).willReturn(true)
-        val token = AjaxAuthenticationToken(USER_MIKOLAJ.username, USER_MIKOLAJ.password)
-        val userContext = UserContext.create(
-                USER_MIKOLAJ.username, listOf(SimpleGrantedAuthority(USER_MIKOLAJ.role.authority()))
-        )
-        given(ajaxAuthenticationProvider.authenticate(token)).willReturn(
-                AjaxAuthenticationToken(userContext, null, userContext.authorities)
-        )
-        givenJwtSettings()
     }
 
     private fun givenJwtSettings() {
@@ -174,8 +160,9 @@ class UsersControllerSpec {
         given(jwtAuthenticationProvider.supports(JwtAuthenticationToken::class.java)).willReturn(true)
         given(jwtAuthenticationProvider.authenticate(jwtAuthenticationToken())).willReturn(
                 JwtAuthenticationToken(
-                        UserContext(
+                        org.springframework.security.core.userdetails.User(
                                 user.username,
+                                "",
                                 listOf(SimpleGrantedAuthority(user.role.authority()))
                         ),
                         listOf(SimpleGrantedAuthority(user.role.authority()))

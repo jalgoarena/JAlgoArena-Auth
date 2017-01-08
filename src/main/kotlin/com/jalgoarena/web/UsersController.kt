@@ -3,13 +3,13 @@ package com.jalgoarena.web
 import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
-import com.jalgoarena.security.auth.JwtAuthenticationToken
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import java.security.Principal
 import javax.inject.Inject
 
 @RestController
@@ -42,11 +42,11 @@ class UsersController(@Inject private val repository: UsersRepository) {
     }
 
     @GetMapping("/api/user", produces = arrayOf("application/json"))
-    fun user(token: JwtAuthenticationToken) = repository.findByUsername(token.principal!!.username).apply {
+    fun user(principal: Principal) = repository.findByUsername(principal.name).apply {
         password = ""
     }
 
-    @PostMapping("/api/signup", produces = arrayOf("application/json"))
+    @PostMapping("/signup", produces = arrayOf("application/json"))
     fun signup(@RequestBody user: User) =
             ResponseEntity(repository.addUser(user), HttpStatus.CREATED)
 }

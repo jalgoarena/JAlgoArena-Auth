@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
@@ -29,7 +28,6 @@ import javax.inject.Inject
 open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Inject private lateinit var successHandler: AuthenticationSuccessHandler
-    @Inject private lateinit var failureHandler: AuthenticationFailureHandler
     @Inject private lateinit var ajaxAuthenticationProvider: AjaxAuthenticationProvider
     @Inject private lateinit var jwtAuthenticationProvider: JwtAuthenticationProvider
     @Inject private lateinit var authenticationManager: AuthenticationManager
@@ -37,7 +35,7 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Bean
     open fun buildAjaxLoginProcessingFilter(): AjaxLoginProcessingFilter {
-        val filter = AjaxLoginProcessingFilter(LOGIN_ENDPOINT, successHandler, failureHandler, objectMapper)
+        val filter = AjaxLoginProcessingFilter(LOGIN_ENDPOINT, successHandler, objectMapper)
         filter.setAuthenticationManager(this.authenticationManager)
         return filter
     }
@@ -46,7 +44,7 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     open fun buildJwtTokenAuthenticationProcessingFilter(): JwtTokenAuthenticationProcessingFilter {
         val pathsToSkip = Arrays.asList(LOGIN_ENDPOINT, SIGNUP_ENDPOINT)
         val matcher = SkipPathRequestMatcher(pathsToSkip, TOKEN_BASED_AUTH_ENTRY_POINT)
-        val filter = JwtTokenAuthenticationProcessingFilter(failureHandler, matcher)
+        val filter = JwtTokenAuthenticationProcessingFilter(matcher)
         filter.setAuthenticationManager(this.authenticationManager)
         return filter
     }

@@ -6,10 +6,7 @@ import com.jalgoarena.security.exceptions.AuthMethodNotSupportedException
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.AuthenticationException
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -18,11 +15,9 @@ import javax.servlet.http.HttpServletResponse
 class AjaxLoginProcessingFilter(
         defaultProcessUrl: String,
         authenticationSuccessHandler: AuthenticationSuccessHandler,
-        authenticationFailureHandler: AuthenticationFailureHandler,
         private val objectMapper: ObjectMapper
 ) : AbstractAuthenticationProcessingFilter(defaultProcessUrl),
-    AuthenticationSuccessHandler by authenticationSuccessHandler,
-    AuthenticationFailureHandler by authenticationFailureHandler {
+    AuthenticationSuccessHandler by authenticationSuccessHandler {
 
     private val LOG = LoggerFactory.getLogger(this.javaClass)
 
@@ -64,14 +59,5 @@ class AjaxLoginProcessingFilter(
             authResult: Authentication
     ) {
         onAuthenticationSuccess(request, response, authResult)
-    }
-
-    override fun unsuccessfulAuthentication(
-            request: HttpServletRequest,
-            response: HttpServletResponse,
-            failed: AuthenticationException
-    ) {
-        SecurityContextHolder.clearContext()
-        onAuthenticationFailure(request, response, failed)
     }
 }

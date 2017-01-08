@@ -6,7 +6,6 @@ import com.jalgoarena.security.auth.ajax.AjaxLoginProcessingFilter
 import com.jalgoarena.security.auth.jwt.JwtAuthenticationProvider
 import com.jalgoarena.security.auth.jwt.JwtTokenAuthenticationProcessingFilter
 import com.jalgoarena.security.auth.jwt.SkipPathRequestMatcher
-import com.jalgoarena.security.auth.jwt.extractor.TokenExtractor
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -33,7 +32,6 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     @Inject private lateinit var failureHandler: AuthenticationFailureHandler
     @Inject private lateinit var ajaxAuthenticationProvider: AjaxAuthenticationProvider
     @Inject private lateinit var jwtAuthenticationProvider: JwtAuthenticationProvider
-    @Inject private lateinit var tokenExtractor: TokenExtractor
     @Inject private lateinit var authenticationManager: AuthenticationManager
     @Inject private lateinit var objectMapper: ObjectMapper
 
@@ -48,7 +46,7 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     open fun buildJwtTokenAuthenticationProcessingFilter(): JwtTokenAuthenticationProcessingFilter {
         val pathsToSkip = Arrays.asList(LOGIN_ENDPOINT, SIGNUP_ENDPOINT)
         val matcher = SkipPathRequestMatcher(pathsToSkip, TOKEN_BASED_AUTH_ENTRY_POINT)
-        val filter = JwtTokenAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher)
+        val filter = JwtTokenAuthenticationProcessingFilter(failureHandler, matcher)
         filter.setAuthenticationManager(this.authenticationManager)
         return filter
     }

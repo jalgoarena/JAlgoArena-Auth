@@ -8,7 +8,6 @@ import com.jalgoarena.security.auth.JwtAuthenticationToken
 import com.jalgoarena.security.auth.ajax.AjaxAuthenticationProvider
 import com.jalgoarena.security.auth.ajax.AjaxAuthenticationToken
 import com.jalgoarena.security.auth.jwt.JwtAuthenticationProvider
-import com.jalgoarena.security.auth.jwt.extractor.JwtHeaderTokenExtractor
 import com.jalgoarena.security.config.JwtSettings
 import com.jalgoarena.security.model.UserContext
 import com.jalgoarena.security.model.token.RawAccessJwtToken
@@ -185,7 +184,7 @@ class UsersControllerSpec {
     }
 
     private fun jwtAuthenticationToken() =
-            JwtAuthenticationToken(RawAccessJwtToken(JwtHeaderTokenExtractor().extract(DUMMY_TOKEN)))
+            JwtAuthenticationToken(RawAccessJwtToken(DUMMY_TOKEN.substring(7)))
 
     private val USER_MIKOLAJ =
             User("mikolaj", "password", "mikolaj@mail.com", "Kraków", "Tyniec Team", Role.USER, "0-0")

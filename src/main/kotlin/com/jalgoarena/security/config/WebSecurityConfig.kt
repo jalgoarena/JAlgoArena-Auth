@@ -1,6 +1,5 @@
 package com.jalgoarena.security.config
 
-import com.jalgoarena.security.auth.JwtAuthenticationEntryPoint
 import com.jalgoarena.security.auth.JwtAuthenticationProvider
 import com.jalgoarena.security.auth.JwtAuthenticationTokenFilter
 import org.springframework.context.annotation.Bean
@@ -25,9 +24,6 @@ import javax.inject.Inject
 @Configuration
 @EnableWebSecurity
 open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
-
-    @Inject
-    private lateinit var unauthorizedHandler: JwtAuthenticationEntryPoint
 
     @Inject
     private lateinit var userDetailsService: UserDetailsService
@@ -65,7 +61,7 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(httpSecurity: HttpSecurity) {
         httpSecurity
                 .csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+                .exceptionHandling()
                 .and()
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

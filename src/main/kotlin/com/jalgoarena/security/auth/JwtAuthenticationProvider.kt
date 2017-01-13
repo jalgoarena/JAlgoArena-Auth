@@ -2,7 +2,7 @@ package com.jalgoarena.security.auth
 
 import com.jalgoarena.security.config.JwtSettings
 import com.jalgoarena.security.token.JwtAuthenticationToken
-import com.jalgoarena.security.token.RawAccessJwtToken
+import com.jalgoarena.security.token.JwtToken
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -17,7 +17,7 @@ open class JwtAuthenticationProvider(
 ) : AuthenticationProvider {
 
     override fun authenticate(authentication: Authentication): Authentication {
-        val rawAccessToken = authentication.credentials as RawAccessJwtToken
+        val rawAccessToken = authentication.credentials as JwtToken
 
         val jwsClaims = rawAccessToken.parseClaims(jwtSettings.tokenSigningKey!!)
         val subject = jwsClaims.body.subject

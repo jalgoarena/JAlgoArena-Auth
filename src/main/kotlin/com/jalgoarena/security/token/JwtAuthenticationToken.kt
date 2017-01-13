@@ -6,10 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails
 
 class JwtAuthenticationToken : AbstractAuthenticationToken {
 
-    private var rawAccessToken: RawAccessJwtToken? = null
+    private var rawAccessToken: JwtToken? = null
     private var userDetails: UserDetails? = null
 
-    constructor(unsafeToken: RawAccessJwtToken) : super(null) {
+    constructor(unsafeToken: JwtToken) : super(null) {
         this.rawAccessToken = unsafeToken
         this.isAuthenticated = false
     }
@@ -28,7 +28,7 @@ class JwtAuthenticationToken : AbstractAuthenticationToken {
         super.setAuthenticated(false)
     }
 
-    override fun getCredentials(): RawAccessJwtToken? {
+    override fun getCredentials(): JwtToken? {
         return rawAccessToken
     }
 

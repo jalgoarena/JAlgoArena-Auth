@@ -1,2 +1,3 @@
 ignore:
   - "src/main/kotlin/com/jalgoarena/security/config/JwtSettings.kt"
+  - "src/main/kotlin/com/jalgoarena/JAlgoArenaAuthServer.kt"

@@ -177,6 +177,7 @@ class UsersControllerSpec {
                 .content(LOGIN_REQUEST_MIKOLAJ))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.token", notNullValue()))
+                .andExpect(jsonPath("$.user.username", `is`(USER_MIKOLAJ.username)))
     }
 
     @Test

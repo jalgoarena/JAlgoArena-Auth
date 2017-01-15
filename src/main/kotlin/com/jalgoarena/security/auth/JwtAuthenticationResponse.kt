@@ -1,3 +1,5 @@
 package com.jalgoarena.security.auth
 
-data class JwtAuthenticationResponse(val token: String)
+import com.jalgoarena.domain.User
+
+data class JwtAuthenticationResponse(val token: String, val user: User)

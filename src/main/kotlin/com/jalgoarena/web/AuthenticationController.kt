@@ -1,5 +1,6 @@
 package com.jalgoarena.web
 
+import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.security.auth.JwtAuthenticationResponse
 import com.jalgoarena.security.auth.LoginRequest
 import com.jalgoarena.security.token.JwtTokenFactory
@@ -27,6 +28,9 @@ class AuthenticationController {
     @Inject
     private lateinit var userDetailsService: UserDetailsService
 
+    @Inject
+    private lateinit var repository: UsersRepository
+
     @PostMapping("/login", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtAuthenticationResponse>? {
 
@@ -41,6 +45,10 @@ class AuthenticationController {
         val userDetails = userDetailsService.loadUserByUsername(loginRequest.username)
         val token = jwtTokenFactory.generateToken(userDetails)
 
-        return ok(JwtAuthenticationResponse(token))
+        val user = repository.findByUsername(loginRequest.username).apply {
+            password = ""
+        }
+
+        return ok(JwtAuthenticationResponse(token, user))
     }
 }

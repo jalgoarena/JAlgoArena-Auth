@@ -1,6 +1,8 @@
 package com.jalgoarena.web
 
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.jalgoarena.data.EmailIsAlreadyUsedException
+import com.jalgoarena.data.UsernameIsAlreadyUsedException
 import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
@@ -76,6 +78,34 @@ class UsersControllerSpec {
                 .andExpect(jsonPath("$.username", `is`(USER_JULIA.username)))
                 .andExpect(jsonPath("$.id", `is`(USER_JULIA.id)))
                 .andExpect(jsonPath("$.password", `is`("")))
+    }
+
+    @Test
+    fun post_signup_returns_409_is_mail_is_already_used() {
+        val userJuliaWithoutId = USER_JULIA.copy(id = null)
+        given(usersRepository.addUser(userJuliaWithoutId))
+                .willThrow(EmailIsAlreadyUsedException::class.java)
+
+        mockMvc.perform(post("/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(USER_JULIA_JSON))
+                .andExpect(status().isConflict)
+                .andExpect(jsonPath("$.error", `is`("Registration Error")))
+                .andExpect(jsonPath("$.message", `is`("Email is already used")))
+    }
+
+    @Test
+    fun post_signup_returns_409_is_username_is_already_used() {
+        val userJuliaWithoutId = USER_JULIA.copy(id = null)
+        given(usersRepository.addUser(userJuliaWithoutId))
+                .willThrow(UsernameIsAlreadyUsedException::class.java)
+
+        mockMvc.perform(post("/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(USER_JULIA_JSON))
+                .andExpect(status().isConflict)
+                .andExpect(jsonPath("$.error", `is`("Registration Error")))
+                .andExpect(jsonPath("$.message", `is`("Username is already used")))
     }
 
     @Test

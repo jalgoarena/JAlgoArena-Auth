@@ -149,6 +149,20 @@ class UsersControllerSpec {
                 .andExpect(jsonPath("$.token", notNullValue()))
     }
 
+    @Test
+    fun post_api_auth_login_returns_403_for_wrong_credentials() {
+        given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
+                USER_MIKOLAJ.copy(password = "different_password")
+        )
+        givenJwtSettings()
+
+        mockMvc.perform(post("/login")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(LOGIN_REQUEST_MIKOLAJ))
+                .andExpect(status().isForbidden)
+    }
+
     private fun givenJwtSettings() {
         given(jwtSettings.tokenIssuer).willReturn("jalgoarena.com")
         given(jwtSettings.tokenExpirationTime).willReturn(1000)

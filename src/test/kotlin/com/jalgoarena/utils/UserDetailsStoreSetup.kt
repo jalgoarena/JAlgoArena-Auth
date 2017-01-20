@@ -10,7 +10,7 @@ class UserDetailsStoreSetup {
 
         val repository = XodusUsersRepository()
         try {
-            repository.addUser(User(
+            repository.add(User(
                     username = "admin",
                     password = "<password>",
                     email = "admin@mail.com",

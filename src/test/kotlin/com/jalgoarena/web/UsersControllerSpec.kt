@@ -24,8 +24,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import javax.inject.Inject
@@ -68,12 +67,12 @@ class UsersControllerSpec {
 
     @Test
     fun post_signup_returns_200_and_newly_created_user() {
-        val userJuliaWithoutId = USER_JULIA.copy(id = null)
-        given(usersRepository.addUser(userJuliaWithoutId)).willReturn(USER_JULIA)
+        val userJuliaWithoutId = USER_JULIA.apply { id = "" }
+        given(usersRepository.add(userJuliaWithoutId)).willReturn(USER_JULIA)
 
         mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(USER_JULIA_JSON))
+                .content(jsonUser(userJuliaWithoutId)))
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("$.username", `is`(USER_JULIA.username)))
                 .andExpect(jsonPath("$.id", `is`(USER_JULIA.id)))
@@ -82,13 +81,13 @@ class UsersControllerSpec {
 
     @Test
     fun post_signup_returns_409_is_mail_is_already_used() {
-        val userJuliaWithoutId = USER_JULIA.copy(id = null)
-        given(usersRepository.addUser(userJuliaWithoutId))
+        val userJuliaWithoutId = USER_JULIA.apply { id = "" }
+        given(usersRepository.add(userJuliaWithoutId))
                 .willThrow(EmailIsAlreadyUsedException::class.java)
 
         mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(USER_JULIA_JSON))
+                .content(jsonUser(userJuliaWithoutId)))
                 .andExpect(status().isConflict)
                 .andExpect(jsonPath("$.error", `is`("Registration Error")))
                 .andExpect(jsonPath("$.message", `is`("Email is already used")))
@@ -96,13 +95,13 @@ class UsersControllerSpec {
 
     @Test
     fun post_signup_returns_409_is_username_is_already_used() {
-        val userJuliaWithoutId = USER_JULIA.copy(id = null)
-        given(usersRepository.addUser(userJuliaWithoutId))
+        val userJuliaWithoutId = USER_JULIA.apply { id = "" }
+        given(usersRepository.add(userJuliaWithoutId))
                 .willThrow(UsernameIsAlreadyUsedException::class.java)
 
         mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(USER_JULIA_JSON))
+                .content(jsonUser(userJuliaWithoutId)))
                 .andExpect(status().isConflict)
                 .andExpect(jsonPath("$.error", `is`("Registration Error")))
                 .andExpect(jsonPath("$.message", `is`("Username is already used")))
@@ -194,6 +193,43 @@ class UsersControllerSpec {
                 .andExpect(status().isForbidden)
     }
 
+    @Test
+    fun put_api_users_returns_401_if_user_did_not_logged_in() {
+        mockMvc.perform(put("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonUser(USER_ADMIN)))
+                .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun put_api_users_returns_401_if_user_is_non_admin() {
+        givenLoggedInUser(USER_MIKOLAJ)
+
+        mockMvc.perform(put("/api/users")
+                .header("X-Authorization", DUMMY_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonUser(USER_ADMIN.copy(password = "password3"))))
+                .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun put_api_users_returns_200_with_updated_user_for_admin() {
+        givenLoggedInUser(USER_ADMIN)
+
+        val updatedUser = USER_ADMIN.copy(team = "New_team")
+
+        given(usersRepository.update(updatedUser)).willReturn(
+                updatedUser
+        )
+
+        mockMvc.perform(put("/api/users")
+                .header("X-Authorization", DUMMY_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonUser(updatedUser)))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.team", `is`("New_team")))
+    }
+
     private fun givenJwtSettings() {
         given(jwtSettings.tokenIssuer).willReturn("jalgoarena.com")
         given(jwtSettings.tokenExpirationTime).willReturn(1000)
@@ -229,15 +265,17 @@ class UsersControllerSpec {
     private val DUMMY_TOKEN = "Bearer 123j12n31lkmdp012j21d"
 
     @Language("JSON")
-    private val USER_JULIA_JSON = """{
-  "username": "julia",
-  "password": "password1",
-  "email": "julia@mail.com",
-  "region": "Kraków",
-  "team": "Tyniec Team",
-  "role": "USER"
+    private fun jsonUser(user: User) = """{
+  "username": "${user.username}",
+  "password": "${user.password}",
+  "email": "${user.email}",
+  "region": "${user.region}",
+  "team": "${user.team}",
+  "role": "${user.role}",
+  "id": "${user.id}"
 }
 """
+
     private val LOGIN_REQUEST_MIKOLAJ = """{
     "username": "${USER_MIKOLAJ.username}",
     "password": "${USER_MIKOLAJ.password}"

@@ -3,15 +3,11 @@ package com.jalgoarena.web
 import com.jalgoarena.data.EmailIsAlreadyUsedException
 import com.jalgoarena.data.UsernameIsAlreadyUsedException
 import com.jalgoarena.data.UsersRepository
-import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
 import org.intellij.lang.annotations.Language
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 import javax.inject.Inject
 
@@ -19,39 +15,24 @@ import javax.inject.Inject
 class UsersController(@Inject private val repository: UsersRepository) {
 
     @GetMapping("/users", produces = arrayOf("application/json"))
-    fun publicUsers(): List<User> {
-        return repository.findAll().map { User(
-                it.username,
-                "",
-                "",
-                it.region,
-                it.team,
-                Role.USER,
-                it.id
-        ) }
+    fun publicUsers() = repository.findAll().map {
+        it.copy(password = "", email = "")
     }
+
+    @PutMapping("/api/users", produces = arrayOf("application/json"))
+    fun updateUser(@RequestBody user: User) =
+            repository.update(user).copy(password = "")
 
     @GetMapping("/api/users", produces = arrayOf("application/json"))
-    fun users(): List<User> {
-        return repository.findAll().map { User(
-                it.username,
-                "",
-                it.email,
-                it.region,
-                it.team,
-                it.role,
-                it.id
-        ) }
-    }
+    fun users() = repository.findAll().map { it.apply { password = "" } }
 
     @GetMapping("/api/user", produces = arrayOf("application/json"))
-    fun user(principal: Principal) = repository.findByUsername(principal.name).apply {
-        password = ""
-    }
+    fun user(principal: Principal) =
+            repository.findByUsername(principal.name).apply { password = "" }
 
     @PostMapping("/signup", produces = arrayOf("application/json"))
     fun signup(@RequestBody user: User): ResponseEntity<*> = handleExceptions {
-        ResponseEntity(repository.addUser(user).copy(password = ""), HttpStatus.CREATED)
+        ResponseEntity(repository.add(user).apply { password = "" }, HttpStatus.CREATED)
     }
 
     private fun handleExceptions(body: () -> ResponseEntity<*>): ResponseEntity<*> = try {

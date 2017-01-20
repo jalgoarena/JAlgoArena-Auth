@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfiguration.ALL
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
 import javax.inject.Inject
@@ -90,9 +91,9 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
         config.allowCredentials = true
-        config.addAllowedOrigin("*")
-        config.addAllowedHeader("*")
-        config.addAllowedMethod("*")
+        config.addAllowedOrigin(ALL)
+        config.addAllowedHeader(ALL)
+        config.addAllowedMethod(ALL)
         source.registerCorsConfiguration("/**", config)
 
         return CorsFilter(source)

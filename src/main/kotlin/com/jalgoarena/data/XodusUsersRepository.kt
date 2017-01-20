@@ -2,6 +2,7 @@ package com.jalgoarena.data
 
 import com.jalgoarena.domain.Constants
 import com.jalgoarena.domain.User
+import jetbrains.exodus.entitystore.Entity
 import jetbrains.exodus.entitystore.PersistentEntityStore
 import jetbrains.exodus.entitystore.PersistentEntityStores
 import jetbrains.exodus.entitystore.PersistentStoreTransaction
@@ -58,24 +59,37 @@ class XodusUsersRepository(dbName: String) : UsersRepository {
         return store.computeInReadonlyTransaction { call(it as PersistentStoreTransaction) }
     }
 
-    override fun addUser(user: User): User {
+    override fun add(user: User): User {
         return transactional {
             checkIfUsernameOrEmailIsAlreadyUsed(it, user)
 
-            val entity = it.newEntity(Constants.entityType).apply {
-                setProperty(Constants.username, user.username)
-                setProperty(
-                        Constants.password,
-                        BCryptPasswordEncoder().encode(user.password)
-                )
-                setProperty(Constants.email, user.email)
-                setProperty(Constants.region, user.region)
-                setProperty(Constants.team, user.team)
-                setProperty(Constants.role, user.role.name)
-            }
-
-            User.from(entity)
+            val entity = it.newEntity(Constants.entityType)
+            updateEntity(entity, user)
         }
+    }
+
+    override fun update(user: User): User {
+        return transactional {
+            val entityId = it.toEntityId(user.id!!)
+            val entity = it.getEntity(entityId)
+            updateEntity(entity, user)
+        }
+    }
+
+    private fun updateEntity(entity: Entity, user: User): User {
+        entity.apply {
+            setProperty(Constants.username, user.username)
+            if (!user.password.isNullOrBlank()) setProperty(
+                    Constants.password,
+                    BCryptPasswordEncoder().encode(user.password)
+            )
+            setProperty(Constants.email, user.email)
+            setProperty(Constants.region, user.region)
+            setProperty(Constants.team, user.team)
+            setProperty(Constants.role, user.role.name)
+        }
+
+        return User.from(entity)
     }
 
     private fun checkIfUsernameOrEmailIsAlreadyUsed(it: PersistentStoreTransaction, user: User) {

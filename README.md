@@ -14,7 +14,7 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 - JAlgoArena Auth allows for creation of account, login in using username and password, authenticating using previously received token or just taking information about users of JAlgoArena.
 - Submissions service talks directly with Auth service to make sure users are authenticated and they have required roles
 
-![Component Diagram](https://github.com/spolnik/JAlgoArena/raw/master/design/component_diagram.png)
+![Component Diagram](https://github.com/spolnik/JAlgoArena-Auth/raw/master/design/component_diagram.png)
 
 ## Components
 

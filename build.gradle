@@ -82,10 +82,6 @@ task releaseZip(type: Zip, dependsOn: 'bootRepackage') {
         include('*.jar')
     }
     from 'run.sh'
-    from('UserDetailsStore') {
-        into('UserDetailsStore')
-        exclude('*.lck')
-    }
     archiveName "JAlgoArena-Auth-${version}.zip"
     destinationDir(file('build/libs'))
 }

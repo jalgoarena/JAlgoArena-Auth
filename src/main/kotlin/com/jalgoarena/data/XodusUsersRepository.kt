@@ -1,15 +1,16 @@
 package com.jalgoarena.data
 
 import com.jalgoarena.domain.Constants
+import com.jalgoarena.domain.Role
 import com.jalgoarena.domain.User
 import jetbrains.exodus.entitystore.Entity
-import jetbrains.exodus.entitystore.PersistentEntityStore
 import jetbrains.exodus.entitystore.PersistentEntityStores
 import jetbrains.exodus.entitystore.PersistentStoreTransaction
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 class XodusUsersRepository(dbName: String) : UsersRepository {
@@ -17,7 +18,18 @@ class XodusUsersRepository(dbName: String) : UsersRepository {
     constructor() : this(Constants.storePath)
 
     private val LOG = LoggerFactory.getLogger(this.javaClass)
-    private val store: PersistentEntityStore = PersistentEntityStores.newInstance(dbName)
+    private val ADMIN_USERNAME = "admin"
+
+    private val store = PersistentEntityStores.newInstance(dbName)
+
+    init {
+        try {
+            findByUsername(ADMIN_USERNAME)
+        } catch (ex: UsernameNotFoundException) {
+            LOG.info("Admin does not exist.")
+            createAdminUser()
+        }
+    }
 
     override fun findAll(): List<User> {
         return readonly {
@@ -102,5 +114,24 @@ class XodusUsersRepository(dbName: String) : UsersRepository {
                 it.find(Constants.entityType, Constants.email, user.email).firstOrNull()
         if (emailAlreadyUsed != null)
             throw EmailIsAlreadyUsedException()
+    }
+
+    private fun createAdminUser() {
+        val randomPassword = UUID.randomUUID().toString()
+
+        LOG.info("""
+
+    Admin user created, password: $randomPassword. Please change after first time log in
+
+""")
+
+        add(User(
+                username = ADMIN_USERNAME,
+                password = randomPassword,
+                email = "admin@mail.com",
+                region = "Kraków",
+                team = "Admin",
+                role = Role.ADMIN
+        ))
     }
 }

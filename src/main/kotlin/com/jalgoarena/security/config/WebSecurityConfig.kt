@@ -16,10 +16,6 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfiguration.ALL
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import org.springframework.web.filter.CorsFilter
 import javax.inject.Inject
 
 @Configuration
@@ -80,23 +76,10 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     private fun addCustomFilters(httpSecurity: HttpSecurity) {
         httpSecurity
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter::class.java)
-                .addFilterBefore(corsFilter(), JwtAuthenticationTokenFilter::class.java)
     }
 
     private fun disablePageCaching(httpSecurity: HttpSecurity) {
         httpSecurity.headers().cacheControl()
-    }
-
-    private fun corsFilter(): CorsFilter {
-        val source = UrlBasedCorsConfigurationSource()
-        val config = CorsConfiguration()
-        config.allowCredentials = true
-        config.addAllowedOrigin(ALL)
-        config.addAllowedHeader(ALL)
-        config.addAllowedMethod(ALL)
-        source.registerCorsConfiguration("/**", config)
-
-        return CorsFilter(source)
     }
 
     companion object {

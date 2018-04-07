@@ -43,7 +43,6 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 ## Running locally
 
 There are two ways to run it - from sources or from binaries.
-- Default port: `9999`
 
 ### Running from binaries
 - go to [releases page](https://github.com/spolnik/JAlgoArena-Auth/releases) and download last app package (JAlgoArena-Auth-[version_number].zip)

@@ -1,6 +1,0 @@
-{
-  "name": "JAlgoArena Auth Service",
-  "description": "JAlgoArena AuthService",
-  "website": "https://github.com/spolnik/jalgoarena-auth",
-  "success_url": "/health"
-}

@@ -1,20 +1,12 @@
 buildscript {
-    ext.kotlin_version = '1.2.31'
-    ext.spring_boot_version = '1.5.10.RELEASE'
     ext.fasterxml_version = '2.9.5'
     ext.xodus_version = '1.2.2'
-
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
-    }
 }
 
 plugins {
     id "jacoco"
+    id "org.jetbrains.kotlin.jvm" version "1.2.40"
+    id 'org.springframework.boot' version '1.5.10.RELEASE'
 }
 
 apply plugin: 'idea'
@@ -47,8 +39,8 @@ dependencies {
             "org.springframework.boot:spring-boot-starter-security",
             'org.springframework.cloud:spring-cloud-starter-eureka',
             'org.springframework.security:spring-security-config',
-            "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
-            "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version",
+            "org.jetbrains.kotlin:kotlin-stdlib",
+            "org.jetbrains.kotlin:kotlin-reflect",
             "io.jsonwebtoken:jjwt:0.7.0",
             "org.jetbrains.xodus:xodus-openAPI:$xodus_version",
             "org.jetbrains.xodus:xodus-entity-store:$xodus_version"

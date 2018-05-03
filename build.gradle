@@ -43,10 +43,8 @@ dependencies {
             "org.jetbrains.kotlin:kotlin-reflect",
             "io.jsonwebtoken:jjwt:0.7.0",
             "org.jetbrains.xodus:xodus-openAPI:$xodus_version",
-            "org.jetbrains.xodus:xodus-entity-store:$xodus_version"
-
-    runtime 'ch.qos.logback:logback-classic:1.1.7',
-            'ch.qos.logback:logback-core:1.1.7'
+            "org.jetbrains.xodus:xodus-entity-store:$xodus_version",
+            'net.logstash.logback:logstash-logback-encoder:5.1'
 
     testCompile 'junit:junit:4.12',
             "org.springframework.boot:spring-boot-starter-test"

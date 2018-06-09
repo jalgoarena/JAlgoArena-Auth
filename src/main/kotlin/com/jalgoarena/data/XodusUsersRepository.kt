@@ -34,7 +34,7 @@ open class XodusUsersRepository(dbName: String) : UsersRepository {
         }
     }
 
-    final override fun findByUsername(username: String): User {
+    override fun findByUsername(username: String): User {
         return readonly {
             it.find(
                     Constants.entityType,

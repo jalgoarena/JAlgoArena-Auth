@@ -13,12 +13,9 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-class XodusUsersRepository(dbName: String) : UsersRepository {
+open class XodusUsersRepository(dbName: String) : UsersRepository {
 
     constructor() : this(Constants.storePath)
-
-    private val LOG = LoggerFactory.getLogger(this.javaClass)
-    private val ADMIN_USERNAME = "admin"
 
     private val store = PersistentEntityStores.newInstance(dbName)
 
@@ -37,7 +34,7 @@ class XodusUsersRepository(dbName: String) : UsersRepository {
         }
     }
 
-    override fun findByUsername(username: String): User {
+    final override fun findByUsername(username: String): User {
         return readonly {
             it.find(
                     Constants.entityType,
@@ -91,7 +88,7 @@ class XodusUsersRepository(dbName: String) : UsersRepository {
     private fun updateEntity(entity: Entity, user: User): User {
         entity.apply {
             setProperty(Constants.username, user.username)
-            if (!user.password.isNullOrBlank()) setProperty(
+            if (!user.password.isBlank()) setProperty(
                     Constants.password,
                     BCryptPasswordEncoder().encode(user.password)
             )
@@ -133,5 +130,10 @@ class XodusUsersRepository(dbName: String) : UsersRepository {
                 team = "Admin",
                 role = Role.ADMIN
         ))
+    }
+
+    companion object {
+        private const val ADMIN_USERNAME = "admin"
+        private val LOG = LoggerFactory.getLogger(XodusUsersRepository::class.java)
     }
 }

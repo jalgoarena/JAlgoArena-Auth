@@ -1,2 +1,2 @@
 #!/bin/bash
-EUREKA_URL=http://localhost:5000/eureka/ nohup java -jar jalgoarena-auth-*.jar &
+nohup java -jar jalgoarena-auth-*.jar &

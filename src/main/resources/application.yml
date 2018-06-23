@@ -1,11 +1,6 @@
 logging:
   path: ./logs
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_URL:http://localhost:5000/eureka/}
-
 server:
   port: ${PORT:5003}
 
@@ -13,14 +8,3 @@ jalgoarena.security.jwt:
   tokenExpirationTime: 43200 # Minutes
   tokenIssuer: jalgoarena.com
   tokenSigningKey: U9FdVDcRlKRV+WDzSOCmdeKkhR9MWANj1Ksti9GiXPdzgyL4LBGhFLvzDxOkJDg/JvD65s3rbcUda757Re4uAA==
----
-spring:
-  profiles: heroku
-eureka:
-  instance:
-    hostname: ${APP_NAME:jalgoarena-auth}.herokuapp.com
-    nonSecurePort: 80
-logging:
-  level:
-    ROOT: INFO
-    org.springframework.web: INFO

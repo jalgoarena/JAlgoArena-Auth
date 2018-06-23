@@ -21,8 +21,8 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 
 - [JAlgoArena](https://github.com/spolnik/JAlgoArena)
 - [JAlgoArena UI](https://github.com/spolnik/JAlgoArena-UI)
-- [JAlgoArena Submissions (and Ranking)](https://github.com/spolnik/JAlgoArena-Submissions)
-- [JAlgoArena Eureka Server](https://github.com/spolnik/JAlgoArena-Eureka)
+- [JAlgoArena Submissions](https://github.com/spolnik/JAlgoArena-Submissions)
+- [JAlgoArena Ranking](https://github.com/spolnik/JAlgoArena-Ranking)
 - [JAlgoArena API Gateway](https://github.com/spolnik/JAlgoArena-API)
 
 ## Continuous Delivery
@@ -31,13 +31,11 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 - in next stage, GitHub notifies Travis CI about changes
 - Travis CI runs whole continuous integration flow, running compilation, tests and generating reports
 - coverage report is sent to Codecov
-- application is deployed into Heroku machine
 
 ## Infrastructure
 
-- Heroku (PaaS)
 - Xodus (embedded highly scalable database) - http://jetbrains.github.io/xodus/
-- Spring Boot, Spring Cloud (Eureka Client)
+- Spring Boot, Spring Cloud
 - TravisCI - https://travis-ci.org/spolnik/JAlgoArena-Auth
 
 ## Running locally
@@ -47,7 +45,7 @@ There are two ways to run it - from sources or from binaries.
 ### Running from binaries
 - go to [releases page](https://github.com/spolnik/JAlgoArena-Auth/releases) and download last app package (JAlgoArena-Auth-[version_number].zip)
 - after unpacking it, go to folder and run `./run.sh` (to make it runnable, invoke command `chmod +x run.sh`)
-- you can modify port and Eureka service url in run.sh script, depending on your infrastructure settings. The script itself can be found in here: [run.sh](run.sh)
+- you can modify port in run.sh script, depending on your infrastructure settings. The script itself can be found in here: [run.sh](run.sh)
 
 ### Running from sources
 - run `git clone https://github.com/spolnik/JAlgoArena-Auth` to clone locally the sources

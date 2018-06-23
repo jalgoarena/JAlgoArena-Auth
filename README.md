@@ -6,7 +6,7 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 - [Components](#components)
 - [Continuous Delivery](#continuous-delivery)
 - [Infrastructure](#infrastructure)
-- [Running Locally] (#running-locally)
+- [Running Locally](#running-locally)
 - [Notes](#notes)
 
 ## Introduction

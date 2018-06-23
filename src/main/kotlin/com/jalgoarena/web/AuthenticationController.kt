@@ -31,7 +31,7 @@ class AuthenticationController {
     @Inject
     private lateinit var repository: UsersRepository
 
-    @PostMapping("/login", produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
+    @PostMapping("/login", produces = [(MediaType.APPLICATION_JSON_VALUE)])
     fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtAuthenticationResponse>? {
 
         val authentication = authenticationManager.authenticate(

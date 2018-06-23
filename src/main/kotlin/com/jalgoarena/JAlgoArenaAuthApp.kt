@@ -9,8 +9,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableConfigurationProperties
-open class JAlgoArenaAuthServer
+open class JAlgoArenaAuthApp
 
 fun main(args: Array<String>) {
-    SpringApplication.run(JAlgoArenaAuthServer::class.java, *args)
+    SpringApplication.run(JAlgoArenaAuthApp::class.java, *args)
 }

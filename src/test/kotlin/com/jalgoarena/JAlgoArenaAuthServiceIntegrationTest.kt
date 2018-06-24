@@ -16,7 +16,7 @@ class JAlgoArenaAuthServiceIntegrationTest {
 
     @Test
     fun check_if_spring_configuration_works_properly() {
-        val body = this.restTemplate.getForObject("/info", String::class.java)
+        val body = this.restTemplate.getForObject("/actuator/info", String::class.java)
         assertThat(body).isEqualTo("{}")
     }
 }

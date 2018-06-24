@@ -83,7 +83,7 @@ class UsersControllerSpec {
     fun post_signup_returns_409_is_mail_is_already_used() {
         val userJuliaWithoutId = USER_JULIA.apply { id = "" }
         given(usersRepository.add(userJuliaWithoutId))
-                .willThrow(EmailIsAlreadyUsedException::class.java)
+                .willAnswer { throw EmailIsAlreadyUsedException() }
 
         mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +97,7 @@ class UsersControllerSpec {
     fun post_signup_returns_409_is_username_is_already_used() {
         val userJuliaWithoutId = USER_JULIA.apply { id = "" }
         given(usersRepository.add(userJuliaWithoutId))
-                .willThrow(UsernameIsAlreadyUsedException::class.java)
+                .willAnswer { throw UsernameIsAlreadyUsedException() }
 
         mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)

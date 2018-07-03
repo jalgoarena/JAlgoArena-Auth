@@ -191,7 +191,6 @@ class UsersControllerSpec {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(LOGIN_REQUEST_MIKOLAJ))
                 .andExpect(status().isForbidden)
-                .andExpect(jsonPath("$", `is`("blabla")))
     }
 
     @Test

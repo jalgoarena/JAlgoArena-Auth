@@ -191,6 +191,21 @@ class UsersControllerSpec {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(LOGIN_REQUEST_MIKOLAJ))
                 .andExpect(status().isForbidden)
+                .andExpect(jsonPath("$", `is`("blabla")))
+    }
+
+    @Test
+    fun post_api_auth_login_returns_400_for_lack_of_credentials() {
+        given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
+                USER_MIKOLAJ.copy(password = "different_password")
+        )
+        givenJwtSettings()
+
+        mockMvc.perform(post("/login")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(""))
+                .andExpect(status().isBadRequest)
     }
 
     @Test

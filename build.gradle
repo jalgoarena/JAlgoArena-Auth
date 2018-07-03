@@ -54,6 +54,8 @@ dependencies {
 
     testCompile 'junit:junit:4.12',
             "org.springframework.boot:spring-boot-starter-test"
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
 
 apply plugin: 'jacoco'

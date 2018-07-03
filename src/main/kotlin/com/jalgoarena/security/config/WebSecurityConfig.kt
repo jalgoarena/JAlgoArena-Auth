@@ -83,11 +83,11 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     companion object {
-        val JWT_TOKEN_HEADER_PARAM = "X-Authorization"
-        val LOGIN_ENDPOINT = "/login"
-        val SIGNUP_ENDPOINT = "/signup"
-        val API_USERS_ENTRY_POINT = "/api/users"
-        val TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**"
-        val ADMIN_ROLE = "ADMIN"
+        const val JWT_TOKEN_HEADER_PARAM = "X-Authorization"
+        const val LOGIN_ENDPOINT = "/login"
+        const val SIGNUP_ENDPOINT = "/signup"
+        const val API_USERS_ENTRY_POINT = "/api/users"
+        const val TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**"
+        const val ADMIN_ROLE = "ADMIN"
     }
 }

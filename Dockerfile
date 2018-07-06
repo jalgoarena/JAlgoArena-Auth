@@ -9,4 +9,4 @@ VOLUME /app/UserDetailsStore
 
 EXPOSE 5003
 
-CMD java -jar /app/jalgoarena-auth-*.jar
+CMD java -XX:+PrintFlagsFinal $JAVA_OPTIONS -jar /app/jalgoarena-auth-*.jar

@@ -85,9 +85,9 @@ task releaseZip(type: Zip, dependsOn: 'bootJar') {
 }
 
 task buildDockerImage(type: Exec, dependsOn: 'bootJar') {
-    commandLine 'docker',  'build', '-t', "spolnik/${rootProject.name}:${version}", '.'
+    commandLine 'docker',  'build', '-t', "jalgoarena/auth:${version}", '.'
 }
 
 task pushDockerImages(type: Exec, dependsOn: 'buildDockerImage') {
-    commandLine 'docker',  'push', "spolnik/${rootProject.name}:${version}"
+    commandLine 'docker',  'push', "jalgoarena/auth:${version}"
 }

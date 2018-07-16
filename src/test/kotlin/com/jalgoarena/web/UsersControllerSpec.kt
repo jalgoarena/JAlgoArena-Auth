@@ -104,7 +104,7 @@ class UsersControllerSpec {
                 .content(jsonUser(userJuliaWithoutId)))
                 .andExpect(status().isConflict)
                 .andExpect(jsonPath("$.error", `is`("Registration Error")))
-                .andExpect(jsonPath("$.message", `is`("Username is already used")))
+                .andExpect(jsonPath("$.message", `is`("User name is already used")))
     }
 
     @Test

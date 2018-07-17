@@ -4,6 +4,7 @@ import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.security.auth.JwtAuthenticationResponse
 import com.jalgoarena.security.auth.LoginRequest
 import com.jalgoarena.security.token.JwtTokenFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
@@ -14,21 +15,20 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import javax.inject.Inject
 
 @RestController
 class AuthenticationController {
 
-    @Inject
+    @Autowired
     private lateinit var authenticationManager: AuthenticationManager
 
-    @Inject
+    @Autowired
     private lateinit var jwtTokenFactory: JwtTokenFactory
 
-    @Inject
+    @Autowired
     private lateinit var userDetailsService: UserDetailsService
 
-    @Inject
+    @Autowired
     private lateinit var repository: UsersRepository
 
     @PostMapping("/login", produces = [(MediaType.APPLICATION_JSON_VALUE)])

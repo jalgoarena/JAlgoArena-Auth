@@ -5,14 +5,16 @@ import com.jalgoarena.data.UsernameIsAlreadyUsedException
 import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.domain.User
 import org.intellij.lang.annotations.Language
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
-import javax.inject.Inject
 
 @RestController
-class UsersController(@Inject private val repository: UsersRepository) {
+class UsersController(
+        @Autowired private val repository: UsersRepository
+) {
 
     @GetMapping("/users", produces = ["application/json"])
     fun publicUsers() = repository.findAll().map {

@@ -1,12 +1,12 @@
 package com.jalgoarena.domain
 
 object Constants {
-    val storePath = "./UserDetailsStore"
-    val entityType = "User"
-    val username = "username"
-    val password = "password"
-    val email = "email"
-    val region = "region"
-    val team = "team"
-    val role = "role"
+    const val storePath = "./UserDetailsStore"
+    const val entityType = "User"
+    const val username = "username"
+    const val password = "password"
+    const val email = "email"
+    const val region = "region"
+    const val team = "team"
+    const val role = "role"
 }

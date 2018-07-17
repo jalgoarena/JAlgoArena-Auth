@@ -4,18 +4,18 @@ import com.jalgoarena.security.config.JwtSettings
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.joda.time.DateTime
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
-import javax.inject.Inject
 
 @Component
 open class SettingsBasedJwtTokenFactory(
-        @Inject private val settings: JwtSettings
+        @Autowired private val settings: JwtSettings
 ): JwtTokenFactory {
 
     override fun generateToken(userDetails: UserDetails) = validate(userDetails) {
         val claims = Jwts.claims().setSubject(userDetails.username)
-        claims.put("scopes", userDetails.authorities.map({ s -> s.toString() }))
+        claims.put("scopes", userDetails.authorities.map { s -> s.toString() })
 
         val currentTime = DateTime()
 

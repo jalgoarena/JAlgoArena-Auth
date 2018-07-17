@@ -4,12 +4,6 @@ logging:
 server:
   port: ${PORT:5003}
 
-spring:
-  cloud:
-    consul:
-      discovery:
-        tags: traefik.frontend.rule=PathPrefixStrip:/auth
-
 jalgoarena.security.jwt:
   tokenExpirationTime: 43200 # Minutes
   tokenIssuer: jalgoarena.com

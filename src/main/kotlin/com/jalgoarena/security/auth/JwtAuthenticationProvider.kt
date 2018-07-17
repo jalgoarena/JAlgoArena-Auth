@@ -3,17 +3,17 @@ package com.jalgoarena.security.auth
 import com.jalgoarena.security.config.JwtSettings
 import com.jalgoarena.security.token.JwtAuthenticationToken
 import com.jalgoarena.security.token.JwtToken
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
 import java.util.*
-import javax.inject.Inject
 
 @Component
 open class JwtAuthenticationProvider(
-        @Inject private val jwtSettings: JwtSettings
+        @Autowired private val jwtSettings: JwtSettings
 ) : AuthenticationProvider {
 
     override fun authenticate(authentication: Authentication): Authentication {

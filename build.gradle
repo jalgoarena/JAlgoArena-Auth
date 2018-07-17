@@ -50,7 +50,9 @@ dependencies {
             "org.jetbrains.xodus:xodus-openAPI:$xodus_version",
             "org.jetbrains.xodus:xodus-entity-store:$xodus_version",
             'net.logstash.logback:logstash-logback-encoder:5.1',
-            'org.springframework.cloud:spring-cloud-starter-consul-all'
+            'joda-time:joda-time'
+
+    compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 
     testCompile 'junit:junit:4.12',
             "org.springframework.boot:spring-boot-starter-test"

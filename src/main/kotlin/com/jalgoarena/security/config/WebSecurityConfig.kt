@@ -2,6 +2,7 @@ package com.jalgoarena.security.config
 
 import com.jalgoarena.security.auth.JwtAuthenticationProvider
 import com.jalgoarena.security.auth.JwtAuthenticationTokenFilter
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -16,16 +17,15 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-import javax.inject.Inject
 
 @Configuration
 @EnableWebSecurity
 open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
-    @Inject
+    @Autowired
     private lateinit var userDetailsService: UserDetailsService
 
-    @Inject
+    @Autowired
     private lateinit var authenticationProvider: JwtAuthenticationProvider
 
     @Bean

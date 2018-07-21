@@ -1,9 +1,11 @@
 package com.jalgoarena.web
 
-import com.jalgoarena.data.UsersRepository
+import com.jalgoarena.data.UserRepository
 import com.jalgoarena.security.auth.JwtAuthenticationResponse
 import com.jalgoarena.security.auth.LoginRequest
 import com.jalgoarena.security.token.JwtTokenFactory
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AuthenticationController {
 
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
     @Autowired
     private lateinit var authenticationManager: AuthenticationManager
 
@@ -29,26 +33,31 @@ class AuthenticationController {
     private lateinit var userDetailsService: UserDetailsService
 
     @Autowired
-    private lateinit var repository: UsersRepository
+    private lateinit var repository: UserRepository
 
     @PostMapping("/login", produces = [(MediaType.APPLICATION_JSON_VALUE)])
     fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtAuthenticationResponse>? {
 
-        val authentication = authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken(
-                        loginRequest.username,
-                        loginRequest.password
-                )
-        )
-        SecurityContextHolder.getContext().authentication = authentication
+        try {
+            val authentication = authenticationManager.authenticate(
+                    UsernamePasswordAuthenticationToken(
+                            loginRequest.username,
+                            loginRequest.password
+                    )
+            )
+            SecurityContextHolder.getContext().authentication = authentication
 
-        val userDetails = userDetailsService.loadUserByUsername(loginRequest.username)
-        val token = jwtTokenFactory.generateToken(userDetails)
+            val userDetails = userDetailsService.loadUserByUsername(loginRequest.username)
+            val token = jwtTokenFactory.generateToken(userDetails)
 
-        val user = repository.findByUsername(loginRequest.username).apply {
-            password = ""
+            val user = repository.findByUsername(loginRequest.username).first().apply {
+                password = ""
+            }
+
+            return ok(JwtAuthenticationResponse(token, user))
+        } catch (e: Exception) {
+            log.error("[err] POST /login: {}", e.message, e)
+            throw e
         }
-
-        return ok(JwtAuthenticationResponse(token, user))
     }
 }

@@ -2,13 +2,13 @@ package com.jalgoarena.web
 
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.jalgoarena.data.EmailIsAlreadyUsedException
+import com.jalgoarena.data.User
+import com.jalgoarena.data.UserRepository
 import com.jalgoarena.data.UsernameIsAlreadyUsedException
-import com.jalgoarena.data.UsersRepository
 import com.jalgoarena.domain.Role
-import com.jalgoarena.domain.User
 import com.jalgoarena.security.auth.JwtAuthenticationProvider
-import com.jalgoarena.security.token.JwtAuthenticationToken
 import com.jalgoarena.security.config.JwtSettings
+import com.jalgoarena.security.token.JwtAuthenticationToken
 import com.jalgoarena.security.token.RawAccessJwtToken
 import org.hamcrest.Matchers.*
 import org.intellij.lang.annotations.Language
@@ -38,13 +38,29 @@ class UsersControllerSpec {
     private lateinit var mockMvc: MockMvc
 
     @MockBean
-    private lateinit var usersRepository: UsersRepository
+    private lateinit var usersRepository: UserRepository
 
     @MockBean
     private lateinit var jwtAuthenticationProvider: JwtAuthenticationProvider
 
     @MockBean
     private lateinit var jwtSettings: JwtSettings
+
+    @Test
+    fun post_api_auth_login_returns_200_and_token_after_successful_login() {
+        given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
+                listOf(USER_MIKOLAJ.copy(password = BCryptPasswordEncoder().encode(USER_MIKOLAJ.password)))
+        )
+
+        givenJwtSettings()
+
+        mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(LOGIN_REQUEST_MIKOLAJ))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.token", notNullValue()))
+                .andExpect(jsonPath("$.user.username", `is`(USER_MIKOLAJ.username)))
+    }
 
     @Test
     fun get_users_returns_200_and_users_with_empty_password_and_email() {
@@ -67,8 +83,8 @@ class UsersControllerSpec {
 
     @Test
     fun post_signup_returns_200_and_newly_created_user() {
-        val userJuliaWithoutId = USER_JULIA.apply { id = "" }
-        given(usersRepository.add(userJuliaWithoutId)).willReturn(USER_JULIA)
+        val userJuliaWithoutId = USER_JULIA_WITHOUT_ID
+        given(usersRepository.save(userJuliaWithoutId)).willReturn(USER_JULIA)
 
         mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -81,8 +97,8 @@ class UsersControllerSpec {
 
     @Test
     fun post_signup_returns_409_is_mail_is_already_used() {
-        val userJuliaWithoutId = USER_JULIA.apply { id = "" }
-        given(usersRepository.add(userJuliaWithoutId))
+        val userJuliaWithoutId = USER_JULIA_WITHOUT_ID
+        given(usersRepository.save(userJuliaWithoutId))
                 .willAnswer { throw EmailIsAlreadyUsedException() }
 
         mockMvc.perform(post("/signup")
@@ -95,8 +111,8 @@ class UsersControllerSpec {
 
     @Test
     fun post_signup_returns_409_is_username_is_already_used() {
-        val userJuliaWithoutId = USER_JULIA.apply { id = "" }
-        given(usersRepository.add(userJuliaWithoutId))
+        val userJuliaWithoutId = USER_JULIA_WITHOUT_ID
+        given(usersRepository.save(userJuliaWithoutId))
                 .willAnswer { throw UsernameIsAlreadyUsedException() }
 
         mockMvc.perform(post("/signup")
@@ -165,24 +181,9 @@ class UsersControllerSpec {
     }
 
     @Test
-    fun post_api_auth_login_returns_200_and_token_after_successful_login() {
-        given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
-                USER_MIKOLAJ.copy(password = BCryptPasswordEncoder().encode(USER_MIKOLAJ.password))
-        )
-        givenJwtSettings()
-
-        mockMvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(LOGIN_REQUEST_MIKOLAJ))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.token", notNullValue()))
-                .andExpect(jsonPath("$.user.username", `is`(USER_MIKOLAJ.username)))
-    }
-
-    @Test
     fun post_api_auth_login_returns_403_for_wrong_credentials() {
         given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
-                USER_MIKOLAJ.copy(password = "different_password")
+                listOf(USER_MIKOLAJ.copy(password = "different_password"))
         )
         givenJwtSettings()
 
@@ -196,7 +197,7 @@ class UsersControllerSpec {
     @Test
     fun post_api_auth_login_returns_400_for_lack_of_credentials() {
         given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
-                USER_MIKOLAJ.copy(password = "different_password")
+                listOf(USER_MIKOLAJ.copy(password = "different_password"))
         )
         givenJwtSettings()
 
@@ -232,7 +233,7 @@ class UsersControllerSpec {
 
         val updatedUser = USER_ADMIN.copy(team = "New_team")
 
-        given(usersRepository.update(updatedUser)).willReturn(
+        given(usersRepository.save(updatedUser)).willReturn(
                 updatedUser
         )
 
@@ -251,7 +252,7 @@ class UsersControllerSpec {
     }
 
     private fun givenLoggedInUser(user: User) {
-        given(usersRepository.findByUsername(user.username)).willReturn(user)
+        given(usersRepository.findByUsername(user.username)).willReturn(listOf(user))
 
         given(jwtAuthenticationProvider.supports(JwtAuthenticationToken::class.java)).willReturn(true)
         given(jwtAuthenticationProvider.authenticate(jwtAuthenticationToken())).willReturn(
@@ -259,9 +260,9 @@ class UsersControllerSpec {
                         org.springframework.security.core.userdetails.User(
                                 user.username,
                                 "",
-                                listOf(SimpleGrantedAuthority(user.role.authority()))
+                                listOf(SimpleGrantedAuthority(Role.valueOf(user.role).authority()))
                         ),
-                        listOf(SimpleGrantedAuthority(user.role.authority()))
+                        listOf(SimpleGrantedAuthority(Role.valueOf(user.role).authority()))
                 )
         )
     }
@@ -269,12 +270,16 @@ class UsersControllerSpec {
     private fun jwtAuthenticationToken() =
             JwtAuthenticationToken(RawAccessJwtToken(DUMMY_TOKEN.substring(7)))
 
+
     private val USER_MIKOLAJ =
-            User("mikolaj", "password", "mikolaj@mail.com", "Kraków", "Tyniec Team", Role.USER, "0-0")
+            User(0, "mikolaj", "password", "mikolaj@mail.com", "Kraków", "Tyniec Team", Role.USER.toString())
     private val USER_JULIA =
-            User("julia", "password1", "julia@mail.com", "Kraków", "Tyniec Team", Role.USER, "0-1")
+            User(1, "julia", "password1", "julia@mail.com", "Kraków", "Tyniec Team", Role.USER.toString())
+    private val USER_JULIA_WITHOUT_ID =
+            User(null, "julia", "password1", "julia@mail.com", "Kraków", "Tyniec Team", Role.USER.toString())
+
     private val USER_ADMIN =
-            User("admin", "password2", "admin@mail.com", "Kraków", "Tyniec Team", Role.ADMIN, "0-2")
+            User(2, "admin", "password2", "admin@mail.com", "Kraków", "Tyniec Team", Role.ADMIN.toString())
 
     private val DUMMY_TOKEN = "Bearer 123j12n31lkmdp012j21d"
 

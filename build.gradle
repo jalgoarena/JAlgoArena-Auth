@@ -1,6 +1,5 @@
 buildscript {
     ext.fasterxml_version = '2.9.5'
-    ext.xodus_version = '1.2.3'
 }
 
 plugins {
@@ -47,10 +46,10 @@ dependencies {
             "org.jetbrains.kotlin:kotlin-stdlib",
             "org.jetbrains.kotlin:kotlin-reflect",
             "io.jsonwebtoken:jjwt:0.7.0",
-            "org.jetbrains.xodus:xodus-openAPI:$xodus_version",
-            "org.jetbrains.xodus:xodus-entity-store:$xodus_version",
             'net.logstash.logback:logstash-logback-encoder:5.1',
-            'joda-time:joda-time'
+            'joda-time:joda-time',
+            'org.springframework.boot:spring-boot-starter-data-jpa',
+            'org.postgresql:postgresql'
 
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 

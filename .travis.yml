@@ -24,10 +24,8 @@ deploy:
     file: "./build/libs/JAlgoArena-Auth-*.zip"
     skip_cleanup: true
     on:
-      repo: spolnik/JAlgoArena-Auth
       tags: true
   - provider: script
     script: bash docker_push
     on:
-      repo: spolnik/JAlgoArena-Auth
       tags: true

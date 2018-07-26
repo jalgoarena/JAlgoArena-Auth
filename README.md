@@ -97,6 +97,50 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
 
   `curl http://localhost:5003/users` 
  
+####Log in
+
+  _Log in gives you access to contest platform - after receiving request response you get token which can be further used as your identity token_
+
+* **URL**
+
+  _/login_>
+
+* **Method:**
+
+  `POST`
+  
+* **Data Params**
+
+  _As part of your request you have to pass login request json_
+  
+  ```json
+  {
+    "username": "user1",
+    "password": "password1"
+  }
+  ```
+
+* **Success Response:**
+  
+  _Once you successfully log in - you will get the token in the response which you may use for accessing protected endpoints_
+
+  * **Code:** 200 <br />
+    **Content:** `{"token":"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMiIsInNjb3BlcyI6WyJST0xFX1VTRVIiXSwiaXNzIjoiamFsZ29hcmVuYS5jb20iLCJpYXQiOjE1MzI2MDk3OTcsImV4cCI6MTUzNTIwMTc5N30.-6GZNBIOwdpelIHzQ9zzamA-LVGHgxO97aL_5e1uDXBOXmXBr6uRAdgnZxNkOiHSp-Hx115hCkDlYIuDCBeMTw","user":{"id":1,"username":"user1","password":"","email":"user1@email.com","region":"Krakow","team":"TyniecTeam","role":"USER"}}`
+ 
+* **Error Response:**
+
+  <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
+
+  * **Code:** 403 FORBIDDEN <br />
+    **Content:** `{"timestamp":"2018-07-26T12:59:24.523+0000","status":403,"error":"Forbidden","message":"Access Denied","path":"/login"}`
+
+* **Sample Call:**
+
+  ```bash
+  curl --header "Content-Type: application/json" \
+       --data '{"username":"user1","password":"password1"}' \
+       http://localhost:5003/login
+  ``` 
 
 ## Running locally
 

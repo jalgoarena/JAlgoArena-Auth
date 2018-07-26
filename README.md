@@ -115,7 +115,7 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
  
 * **Error Response:**
 
-  <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
+  _In case of wrong credentials access will be forbidden._
 
   * **Code:** 403 FORBIDDEN <br />
     **Content:** `{"timestamp":"2018-07-26T12:59:24.523+0000","status":403,"error":"Forbidden","message":"Access Denied","path":"/login"}`

@@ -3,9 +3,7 @@
 JAlgoArena Auth is core service dedicated for authentication and authorization of the JAlgoArena users. It's keeping all data in Xodus DB, and for authorization it's using JWT tokens which are verified on the requests. Initial creation of accounts happens through AJAX requests.
 
 - [Introduction](#introduction)
-- [Components](#components)
-- [Continuous Delivery](#continuous-delivery)
-- [Infrastructure](#infrastructure)
+- [API](#api)
 - [Running Locally](#running-locally)
 - [Notes](#notes)
 
@@ -19,7 +17,7 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 
 ## API
 
-####Sign up
+#### Sign up
 
   _Create a new user_
 
@@ -72,7 +70,7 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
        http://localhost:5003/signup
   ```
 
-####Get all users
+#### Get all users
 
 Users api exposes two kind of APIs, public, and protected which can be accessed only using token.
 
@@ -97,7 +95,7 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
 
   `curl http://localhost:5003/users` 
  
-####Log in
+#### Log in
 
   _Log in gives you access to contest platform - after receiving request response you get token which can be further used as your identity token_
 

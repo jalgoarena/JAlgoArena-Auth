@@ -136,7 +136,7 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
 
 |URL|Method|
 |---|------|
-|_/api/user_|`POST`|
+|_/api/user_|`GET`|
   
 * **Data Params**
 

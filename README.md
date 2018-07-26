@@ -130,6 +130,45 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
        http://localhost:5003/login
   ``` 
 
+#### Check session
+
+  _Checking session is using token given during log in process - which can be used for accessing secured platform REST api and to confirm identity_
+
+|URL|Method|
+|---|------|
+|_/api/user_|`POST`|
+  
+* **Data Params**
+
+  _As part of your request you have to set required headers_
+  
+  ```
+  'Accept': 'application/json',
+  'X-Authorization': 'Bearer <token>'
+  ```
+
+* **Success Response:**
+  
+  _Once you successfully check session - you will get the user data in the response which is used as your identity_
+
+  * **Code:** 200 <br />
+    **Content:** `{"id":1,"username":"user1","firstname":"First Name","surname":"Surname","password":"","email":"user1@email.com","region":"Krakow","team":"TyniecTeam","role":"USER"}`
+ 
+* **Error Response:**
+
+  _In case of wrong credentials access will be forbidden._
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `"timestamp":"2018-07-26T18:24:07.061+0000","status":401,"error":"Unauthorized","message":"Unauthorized","path":"/api/user"}`
+
+* **Sample Call:**
+
+  ```bash
+  curl --header "Content-Type: application/json" \
+       --header "X-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInNjb3BlcyI6WyJST0xFX1VTRVIiXSwiaXNzIjoiamFsZ29hcmVuYS5jb20iLCJpYXQiOjE1MzI2MjkwNTksImV4cCI6MTUzNTIyMTA1OX0.klPU-g_7hDWw-A5Fr6i0y4pCVPRuOLnHsRV1Y7GKMmxYELNFAeLpsAf1y1JmW-KV8wz0pUztvTgcH2f-BJ6zKA" \
+       http://localhost:5003/api/user
+  ``` 
+
 ## Running locally
 
 There are two ways to run it - from sources or from binaries.

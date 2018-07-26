@@ -14,6 +14,7 @@ import org.hamcrest.Matchers.*
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -28,6 +29,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
@@ -49,7 +51,7 @@ class UsersControllerSpec {
     @Test
     fun post_api_auth_login_returns_200_and_token_after_successful_login() {
         given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
-                listOf(USER_MIKOLAJ.copy(password = BCryptPasswordEncoder().encode(USER_MIKOLAJ.password)))
+                Optional.of(USER_MIKOLAJ.copy(password = BCryptPasswordEncoder().encode(USER_MIKOLAJ.password)))
         )
 
         givenJwtSettings()
@@ -74,7 +76,7 @@ class UsersControllerSpec {
                 .andExpect(jsonPath("$", hasSize<ArrayNode>(2)))
                 .andExpect(jsonPath("$[0].username", `is`(USER_MIKOLAJ.username)))
                 .andExpect(jsonPath("$[0].password", `is`("")))
-                .andExpect(jsonPath("$[0].email", `is`("")))
+                .andExpect(jsonPath("$[0].email", `is`(USER_MIKOLAJ.email)))
                 .andExpect(jsonPath("$[0].region", `is`(USER_MIKOLAJ.region)))
                 .andExpect(jsonPath("$[0].team", `is`(USER_MIKOLAJ.team)))
                 .andExpect(jsonPath("$[0].role", `is`("USER")))
@@ -83,12 +85,12 @@ class UsersControllerSpec {
 
     @Test
     fun post_signup_returns_200_and_newly_created_user() {
-        val userJuliaWithoutId = USER_JULIA_WITHOUT_ID
-        given(usersRepository.save(userJuliaWithoutId)).willReturn(USER_JULIA)
+        given<User>(usersRepository.save(ArgumentMatchers.any()))
+                .willReturn(USER_JULIA)
 
         mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonUser(userJuliaWithoutId)))
+                .content(jsonUser(USER_JULIA_WITHOUT_ID)))
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("$.username", `is`(USER_JULIA.username)))
                 .andExpect(jsonPath("$.id", `is`(USER_JULIA.id)))
@@ -97,13 +99,12 @@ class UsersControllerSpec {
 
     @Test
     fun post_signup_returns_409_is_mail_is_already_used() {
-        val userJuliaWithoutId = USER_JULIA_WITHOUT_ID
-        given(usersRepository.save(userJuliaWithoutId))
+        given<User>(usersRepository.save(ArgumentMatchers.any()))
                 .willAnswer { throw EmailIsAlreadyUsedException() }
 
         mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonUser(userJuliaWithoutId)))
+                .content(jsonUser(USER_JULIA_WITHOUT_ID)))
                 .andExpect(status().isConflict)
                 .andExpect(jsonPath("$.error", `is`("Registration Error")))
                 .andExpect(jsonPath("$.message", `is`("Email is already used")))
@@ -111,13 +112,12 @@ class UsersControllerSpec {
 
     @Test
     fun post_signup_returns_409_is_username_is_already_used() {
-        val userJuliaWithoutId = USER_JULIA_WITHOUT_ID
-        given(usersRepository.save(userJuliaWithoutId))
+        given<User>(usersRepository.save(ArgumentMatchers.any()))
                 .willAnswer { throw UsernameIsAlreadyUsedException() }
 
         mockMvc.perform(post("/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonUser(userJuliaWithoutId)))
+                .content(jsonUser(USER_JULIA_WITHOUT_ID)))
                 .andExpect(status().isConflict)
                 .andExpect(jsonPath("$.error", `is`("Registration Error")))
                 .andExpect(jsonPath("$.message", `is`("User name is already used")))
@@ -165,25 +165,9 @@ class UsersControllerSpec {
     }
 
     @Test
-    fun get_api_users_returns_200_and_all_users_for_admin() {
-        givenLoggedInUser(USER_ADMIN)
-
-        given(usersRepository.findAll()).willReturn(listOf(
-                USER_MIKOLAJ, USER_JULIA, USER_ADMIN
-        ))
-
-        mockMvc.perform(get("/api/users")
-                .header("X-Authorization", DUMMY_TOKEN)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$", hasSize<ArrayNode>(3)))
-                .andExpect(jsonPath("$[0].password", `is`("")))
-    }
-
-    @Test
     fun post_api_auth_login_returns_403_for_wrong_credentials() {
         given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
-                listOf(USER_MIKOLAJ.copy(password = "different_password"))
+                Optional.of(USER_MIKOLAJ.copy(password = "different_password"))
         )
         givenJwtSettings()
 
@@ -197,7 +181,7 @@ class UsersControllerSpec {
     @Test
     fun post_api_auth_login_returns_400_for_lack_of_credentials() {
         given(usersRepository.findByUsername(USER_MIKOLAJ.username)).willReturn(
-                listOf(USER_MIKOLAJ.copy(password = "different_password"))
+                Optional.of(USER_MIKOLAJ.copy(password = "different_password"))
         )
         givenJwtSettings()
 
@@ -233,9 +217,8 @@ class UsersControllerSpec {
 
         val updatedUser = USER_ADMIN.copy(team = "New_team")
 
-        given(usersRepository.save(updatedUser)).willReturn(
-                updatedUser
-        )
+        given<User>(usersRepository.save(ArgumentMatchers.any()))
+                .willReturn(updatedUser)
 
         mockMvc.perform(put("/api/users")
                 .header("X-Authorization", DUMMY_TOKEN)
@@ -252,7 +235,7 @@ class UsersControllerSpec {
     }
 
     private fun givenLoggedInUser(user: User) {
-        given(usersRepository.findByUsername(user.username)).willReturn(listOf(user))
+        given(usersRepository.findByUsername(user.username)).willReturn(Optional.of(user))
 
         given(jwtAuthenticationProvider.supports(JwtAuthenticationToken::class.java)).willReturn(true)
         given(jwtAuthenticationProvider.authenticate(jwtAuthenticationToken())).willReturn(
@@ -270,21 +253,23 @@ class UsersControllerSpec {
     private fun jwtAuthenticationToken() =
             JwtAuthenticationToken(RawAccessJwtToken(DUMMY_TOKEN.substring(7)))
 
+    companion object {
 
-    private val USER_MIKOLAJ =
-            User(0, "mikolaj", "password", "mikolaj@mail.com", "Kraków", "Tyniec Team", Role.USER.toString())
-    private val USER_JULIA =
-            User(1, "julia", "password1", "julia@mail.com", "Kraków", "Tyniec Team", Role.USER.toString())
-    private val USER_JULIA_WITHOUT_ID =
-            User(null, "julia", "password1", "julia@mail.com", "Kraków", "Tyniec Team", Role.USER.toString())
 
-    private val USER_ADMIN =
-            User(2, "admin", "password2", "admin@mail.com", "Kraków", "Tyniec Team", Role.ADMIN.toString())
+        private val USER_MIKOLAJ =
+                User(0, "mikolaj", "Mikolaj", "Spolnik", "password", "mikolaj@mail.com", "Kraków", "Tyniec Team", Role.USER.toString())
+        private val USER_JULIA =
+                User(1, "julia", "Julia", "Spolnik", "password1", "julia@mail.com", "Kraków", "Tyniec Team", Role.USER.toString())
+        private val USER_JULIA_WITHOUT_ID =
+                User(null, "julia", "Julia", "Spolnik", "password1", "julia@mail.com", "Kraków", "Tyniec Team", Role.USER.toString())
 
-    private val DUMMY_TOKEN = "Bearer 123j12n31lkmdp012j21d"
+        private val USER_ADMIN =
+                User(2, "admin", "", "", "password2", "admin@mail.com", "Kraków", "Tyniec Team", Role.ADMIN.toString())
 
-    @Language("JSON")
-    private fun jsonUser(user: User) = """{
+        private val DUMMY_TOKEN = "Bearer 123j12n31lkmdp012j21d"
+
+        @Language("JSON")
+        private fun jsonUser(user: User) = """{
   "username": "${user.username}",
   "password": "${user.password}",
   "email": "${user.email}",
@@ -295,10 +280,11 @@ class UsersControllerSpec {
 }
 """
 
-    private val LOGIN_REQUEST_MIKOLAJ = """{
+        private val LOGIN_REQUEST_MIKOLAJ = """{
     "username": "${USER_MIKOLAJ.username}",
     "password": "${USER_MIKOLAJ.password}"
 }
 """
 
+    }
 }

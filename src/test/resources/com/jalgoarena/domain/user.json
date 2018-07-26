@@ -1,9 +1,11 @@
 {
-  "username": "mikołaj",
+  "username": "mikolaj",
   "password": "blabla",
+  "firstname": "Mikolaj",
+  "surname": "Spolnik",
   "email": "mikolaj@email.com",
   "region": "Kraków",
   "team": "Tyniec Team",
   "role": "USER",
-  "id": "0-0"
+  "id": 0
 }

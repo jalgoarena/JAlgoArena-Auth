@@ -1,6 +1,7 @@
 package com.jalgoarena.domain
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.jalgoarena.data.User
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
 import org.junit.Before
@@ -29,25 +30,32 @@ class UserJsonSerializationTest {
                 .isEqualTo(USER)
     }
 
-    private val USER = User(
-        username = "mikołaj",
-        password = "blabla",
-        email = "mikolaj@email.com",
-        region = "Kraków",
-        team = "Tyniec Team",
-        role = Role.USER,
-        id = "0-0"
-    )
+    companion object {
+        private val USER = User(
+                username = "mikolaj",
+                password = "blabla",
+                firstname = "Mikolaj",
+                surname = "Spolnik",
+                email = "mikolaj@email.com",
+                region = "Kraków",
+                team = "Tyniec Team",
+                role = Role.USER.toString(),
+                id = 0
+        )
 
-    @Language("JSON")
-    private val USER_JSON = """{
-  "username": "mikołaj",
+        @Language("JSON")
+        private val USER_JSON = """{
+  "username": "mikolaj",
   "password": "blabla",
+  "firstname": "Mikolaj",
+  "surname": "Spolnik",
   "email": "mikolaj@email.com",
   "region": "Kraków",
   "team": "Tyniec Team",
   "role": "USER",
-  "id": "0-0"
+  "id": 0
 }
 """
+
+    }
 }

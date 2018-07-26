@@ -23,22 +23,9 @@ class UsersController(
             repository.findAll().map { it.copy(password = "") }
 
     @PutMapping("/api/users", produces = ["application/json"])
-    fun updateUser(@RequestBody user: User, principal: Principal): ResponseEntity<User?> {
-        val admin = repository.findByUsername(principal.name)
-
-        return if (admin.isPresent && admin.get().role == Role.ADMIN.toString()) {
-            ResponseEntity(
-                    repository.save(user.apply {password = BCryptPasswordEncoder().encode(user.password)})
-                            .copy(password = ""),
-                    HttpStatus.ACCEPTED
-            )
-        } else {
-            ResponseEntity(
-                    null as User?,
-                    HttpStatus.FORBIDDEN
-            )
-        }
-    }
+    fun updateUser(@RequestBody user: User) =
+            repository.save(user.apply {password = BCryptPasswordEncoder().encode(user.password)})
+                    .copy(password = "")
 
     @GetMapping("/api/user", produces = ["application/json"])
     fun checkSession(principal: Principal) =

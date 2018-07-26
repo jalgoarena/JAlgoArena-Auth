@@ -21,13 +21,9 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 
   _Create a new user_
 
-* **URL**
-
-  _/signup_
-
-* **Method:**
-
-  `POST`
+|URL|Method|
+|---|------|
+|_/signup_|`POST`|
 
 * **Data Params**
 
@@ -76,13 +72,9 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
 
 > Token is generated and returned during successful login  
 
-* **URL**
-
-  _/users_
-
-* **Method:**
-  
-  `GET`
+|URL|Method|
+|---|------|
+|_/users_|`GET`|
 
 * **Success Response:**
   
@@ -99,13 +91,9 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
 
   _Log in gives you access to contest platform - after receiving request response you get token which can be further used as your identity token_
 
-* **URL**
-
-  _/login_>
-
-* **Method:**
-
-  `POST`
+|URL|Method|
+|---|------|
+|_/login_|`POST`|
   
 * **Data Params**
 

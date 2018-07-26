@@ -91,7 +91,7 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
   Array of users
 
   * **Code:** 200 <br />
-    **Content:** `[]`
+    **Content:** `[{"id":1,"username":"user1","password":"","email":"","region":"Krakow","team":"TyniecTeam","role":"USER"}]`
  
 * **Sample Call:**
 

@@ -33,9 +33,11 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
   {
     "username": "user1",
     "password": "password1",
+    "firstname":"First Name",
+    "surname":"Surname",
     "email": "user1@email.com",
     "region": "Krakow",
-    "team": "Tyniec Team"
+    "team": "TyniecTeam"
   }
   ```
 
@@ -44,7 +46,7 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
   _As the response you will get user data json filled with assigned id and role_
 
   * **Code:** 201 CREATED <br />
-    **Content:** `{"id":1,"username":"user1","password":"","email":"user1@email.com","region":"Krakow","team":"TyniecTeam","role":"USER"}`
+    **Content:** `{"id":1,"username":"user1","password":"","firstname":"First Name","surname":"Surname","email":"user1@email.com","region":"Krakow","team":"TyniecTeam","role":"USER"}`
 
 * **Error Response:**
 
@@ -62,7 +64,7 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 
   ```bash
   curl --header "Content-Type: application/json" \
-       --data '{"username":"user2","password":"password1","email":"user1@email.com","region":"Krakow","team":"TyniecTeam"}' \
+       --data '{"username":"user1","password":"password1","firstname":"First Name","surname":"Surname","email":"user1@email.com","region":"Krakow","team":"TyniecTeam"}' \
        http://localhost:5003/signup
   ```
 
@@ -81,7 +83,7 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
   Array of users
 
   * **Code:** 200 <br />
-    **Content:** `[{"id":1,"username":"user1","password":"","email":"","region":"Krakow","team":"TyniecTeam","role":"USER"}]`
+    **Content:** `[{"id":1,"username":"user1","password":"","firstname":"First Name","surname":"Surname","email":"","region":"Krakow","team":"TyniecTeam","role":"USER"}]`
  
 * **Sample Call:**
 
@@ -111,7 +113,7 @@ Users api exposes two kind of APIs, public, and protected which can be accessed 
   _Once you successfully log in - you will get the token in the response which you may use for accessing protected endpoints_
 
   * **Code:** 200 <br />
-    **Content:** `{"token":"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMiIsInNjb3BlcyI6WyJST0xFX1VTRVIiXSwiaXNzIjoiamFsZ29hcmVuYS5jb20iLCJpYXQiOjE1MzI2MDk3OTcsImV4cCI6MTUzNTIwMTc5N30.-6GZNBIOwdpelIHzQ9zzamA-LVGHgxO97aL_5e1uDXBOXmXBr6uRAdgnZxNkOiHSp-Hx115hCkDlYIuDCBeMTw","user":{"id":1,"username":"user1","password":"","email":"user1@email.com","region":"Krakow","team":"TyniecTeam","role":"USER"}}`
+    **Content:** `{"token":"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMiIsInNjb3BlcyI6WyJST0xFX1VTRVIiXSwiaXNzIjoiamFsZ29hcmVuYS5jb20iLCJpYXQiOjE1MzI2MDk3OTcsImV4cCI6MTUzNTIwMTc5N30.-6GZNBIOwdpelIHzQ9zzamA-LVGHgxO97aL_5e1uDXBOXmXBr6uRAdgnZxNkOiHSp-Hx115hCkDlYIuDCBeMTw","user":{"id":1,"username":"user1","password":"","firstname":"First Name","surname":"Surname","email":"user1@email.com","region":"Krakow","team":"TyniecTeam","role":"USER"}}`
  
 * **Error Response:**
 

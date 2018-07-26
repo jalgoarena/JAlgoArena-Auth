@@ -15,6 +15,10 @@ data class User(
         @Column(unique=true, nullable=false)
         var username: String = "",
         @Column(nullable=false)
+        var firstname: String = "",
+        @Column(nullable=false)
+        var surname: String = "",
+        @Column(nullable=false)
         var password: String = "",
         @Column(unique=true, nullable=false)
         var email: String = "",

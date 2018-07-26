@@ -2,7 +2,11 @@ package com.jalgoarena.web
 
 import com.jalgoarena.data.User
 import com.jalgoarena.data.UserRepository
+import com.jalgoarena.domain.Role
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -15,18 +19,28 @@ class UsersController(
 ) {
 
     @GetMapping("/users", produces = ["application/json"])
-    fun publicUsers() = repository.findAll().map {
-        it.copy(password = "", email = "")
-    }
+    fun publicUsers() =
+            repository.findAll().map { it.copy(password = "") }
 
     @PutMapping("/api/users", produces = ["application/json"])
-    fun updateUser(@RequestBody user: User) =
-            repository.save(user).copy(password = "")
+    fun updateUser(@RequestBody user: User, principal: Principal): ResponseEntity<User?> {
+        val admin = repository.findByUsername(principal.name)
 
-    @GetMapping("/api/users", produces = ["application/json"])
-    fun users() = repository.findAll().map { it.apply { password = "" } }
+        return if (admin.isPresent && admin.get().role == Role.ADMIN.toString()) {
+            ResponseEntity(
+                    repository.save(user.apply {password = BCryptPasswordEncoder().encode(user.password)})
+                            .copy(password = ""),
+                    HttpStatus.ACCEPTED
+            )
+        } else {
+            ResponseEntity(
+                    null as User?,
+                    HttpStatus.FORBIDDEN
+            )
+        }
+    }
 
     @GetMapping("/api/user", produces = ["application/json"])
-    fun user(principal: Principal) =
-            repository.findByUsername(principal.name).get().apply { password = "" }
+    fun checkSession(principal: Principal) =
+            repository.findByUsername(principal.name).get().copy(password = "")
 }

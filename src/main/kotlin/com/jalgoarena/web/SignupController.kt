@@ -28,7 +28,7 @@ open class SignupController(
 
         return ResponseEntity(
                 repository.save(user.apply {password = BCryptPasswordEncoder().encode(user.password)})
-                        .apply { password = "" },
+                        .copy(password = ""),
                 HttpStatus.CREATED
         )
     }

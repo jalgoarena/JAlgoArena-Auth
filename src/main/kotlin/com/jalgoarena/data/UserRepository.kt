@@ -1,9 +1,9 @@
 package com.jalgoarena.data
 
 import org.springframework.data.jpa.repository.JpaRepository
-import javax.transaction.Transactional
+import java.util.*
 
-@Transactional(Transactional.TxType.MANDATORY)
 interface UserRepository : JpaRepository<User, Long> {
-    fun findByUsername(username: String): List<User>
+    fun findByUsername(username: String): Optional<User>
+    fun findByEmail(email: String): Optional<User>
 }

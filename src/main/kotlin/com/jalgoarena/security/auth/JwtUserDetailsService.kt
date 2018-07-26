@@ -14,7 +14,11 @@ class JwtUserDetailsService(
 ) : UserDetailsService {
 
     override fun loadUserByUsername(username: String): User {
-        val user = usersRepository.findByUsername(username).first()
-        return User(user.username, user.password, listOf(SimpleGrantedAuthority(Role.valueOf(user.role).authority())))
+        val user = usersRepository.findByUsername(username).get()
+        return User(
+                user.username,
+                user.password,
+                listOf(SimpleGrantedAuthority(Role.valueOf(user.role).authority()))
+        )
     }
 }

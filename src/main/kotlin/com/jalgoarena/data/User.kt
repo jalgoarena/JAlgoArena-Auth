@@ -3,7 +3,6 @@ package com.jalgoarena.data
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.jalgoarena.domain.Role
-import java.lang.Long.parseLong
 import javax.persistence.*
 
 @Entity
@@ -12,11 +11,17 @@ import javax.persistence.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class User(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
-        val id: Int? = null,
-        val username: String,
-        var password: String,
-        val email: String,
-        val region: String,
-        val team: String,
-        val role: String
+        var id: Int? = null,
+        @Column(unique=true, nullable=false)
+        var username: String = "",
+        @Column(nullable=false)
+        var password: String = "",
+        @Column(unique=true, nullable=false)
+        var email: String = "",
+        @Column(nullable=false)
+        var region: String = "",
+        @Column(nullable=false)
+        var team: String = "",
+        @Column(nullable=false)
+        var role: String = Role.USER.toString()
 )

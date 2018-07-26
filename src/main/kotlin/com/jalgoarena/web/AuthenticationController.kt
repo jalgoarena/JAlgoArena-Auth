@@ -50,7 +50,7 @@ class AuthenticationController {
             val userDetails = userDetailsService.loadUserByUsername(loginRequest.username)
             val token = jwtTokenFactory.generateToken(userDetails)
 
-            val user = repository.findByUsername(loginRequest.username).first().apply {
+            val user = repository.findByUsername(loginRequest.username).get().apply {
                 password = ""
             }
 

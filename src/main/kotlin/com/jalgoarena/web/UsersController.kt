@@ -1,14 +1,12 @@
 package com.jalgoarena.web
 
-import com.jalgoarena.data.EmailIsAlreadyUsedException
 import com.jalgoarena.data.User
-import com.jalgoarena.data.UsernameIsAlreadyUsedException
 import com.jalgoarena.data.UserRepository
-import org.intellij.lang.annotations.Language
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
 
 @RestController
@@ -30,25 +28,5 @@ class UsersController(
 
     @GetMapping("/api/user", produces = ["application/json"])
     fun user(principal: Principal) =
-            repository.findByUsername(principal.name).first().apply { password = "" }
-
-    @PostMapping("/signup", produces = ["application/json"])
-    fun signup(@RequestBody user: User) =
-            ResponseEntity(
-                    repository.save(user)
-                            .apply { password = "" },
-                    HttpStatus.CREATED
-            )
-
-    @Language("JSON")
-    private fun error(message: String) = ResponseEntity.status(HttpStatus.CONFLICT)
-            .body("{ \"error\": \"Registration Error\", \"message\": \"$message\" }")
-
-    @ExceptionHandler
-    fun usernameIsAlreadyUsed(ex: UsernameIsAlreadyUsedException)
-            = error(ex.message!!)
-
-    @ExceptionHandler
-    fun emailIsAlreadyUsed(ex: EmailIsAlreadyUsedException)
-            = error(ex.message!!)
+            repository.findByUsername(principal.name).get().apply { password = "" }
 }

@@ -17,26 +17,86 @@ JAlgoArena Auth is core service dedicated for authentication and authorization o
 
 ![Component Diagram](https://github.com/spolnik/JAlgoArena-Auth/raw/master/design/component_diagram.png)
 
-## Components
+## API
 
-- [JAlgoArena](https://github.com/spolnik/JAlgoArena)
-- [JAlgoArena UI](https://github.com/spolnik/JAlgoArena-UI)
-- [JAlgoArena Submissions](https://github.com/spolnik/JAlgoArena-Submissions)
-- [JAlgoArena Ranking](https://github.com/spolnik/JAlgoArena-Ranking)
-- [JAlgoArena API Gateway](https://github.com/spolnik/JAlgoArena-API)
+####Sign up
 
-## Continuous Delivery
+  _Create a new user_
 
-- initially, developer push his changes to GitHub
-- in next stage, GitHub notifies Travis CI about changes
-- Travis CI runs whole continuous integration flow, running compilation, tests and generating reports
-- coverage report is sent to Codecov
+* **URL**
 
-## Infrastructure
+  _/signup_
 
-- Xodus (embedded highly scalable database) - http://jetbrains.github.io/xodus/
-- Spring Boot, Spring Cloud
-- TravisCI - https://travis-ci.org/spolnik/JAlgoArena-Auth
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  _User json data passed as request body_
+  
+  ```json
+  {
+    "username": "user1",
+    "password": "password1",
+    "email": "user1@email.com",
+    "region": "Krakow",
+    "team": "Tyniec Team"
+  }
+  ```
+
+* **Success Response:**
+
+  _As the response you will get user data json filled with assigned id and role_
+
+  * **Code:** 201 CREATED <br />
+    **Content:** `{"id":1,"username":"user1","password":"","email":"user1@email.com","region":"Krakow","team":"TyniecTeam","role":"USER"}`
+
+* **Error Response:**
+
+  _If you try using same user name or email which is already taken by one of existing users - then you will get error response_
+
+  * **Code:** 409 CONFLICT <br />
+    **Content:** `{ "error": "Registration Error", "message": "User name is already used" }`
+
+  OR
+
+  * **Code:** 409 CONFLICT <br />
+    **Content:** `{ "error": "Registration Error", "message": "Email is already used" }`
+
+* **Sample Call:**
+
+  ```bash
+  curl --header "Content-Type: application/json" \
+       --data '{"username":"user2","password":"password1","email":"user1@email.com","region":"Krakow","team":"TyniecTeam"}' \
+       http://localhost:5003/signup
+  ```
+
+####Get all users
+
+Users api exposes two kind of APIs, public, and protected which can be accessed only using token.
+
+> Token is generated and returned during successful login  
+
+* **URL**
+
+  _/users_
+
+* **Method:**
+  
+  `GET`
+
+* **Success Response:**
+  
+  Array of users
+
+  * **Code:** 200 <br />
+    **Content:** `[]`
+ 
+* **Sample Call:**
+
+  `curl http://localhost:5003/users` 
+ 
 
 ## Running locally
 

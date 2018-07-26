@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -26,7 +27,7 @@ open class SignupController(
         checkIfUsernameOrEmailIsAlreadyUsed(user)
 
         return ResponseEntity(
-                repository.save(user)
+                repository.save(user.apply {password = BCryptPasswordEncoder().encode(user.password)})
                         .apply { password = "" },
                 HttpStatus.CREATED
         )
@@ -68,7 +69,7 @@ open class SignupController(
 
         repository.save(User(
                 username = ADMIN_USERNAME,
-                password = randomPassword,
+                password = BCryptPasswordEncoder().encode(randomPassword),
                 email = "admin@mail.com",
                 region = "Admin",
                 team = "Admin",

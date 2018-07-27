@@ -1,6 +1,6 @@
 package com.jalgoarena.web
 
-import com.jalgoarena.data.User
+import com.jalgoarena.domain.User
 import com.jalgoarena.data.UserRepository
 import com.jalgoarena.domain.Role
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,7 +1,7 @@
 package com.jalgoarena.domain
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.jalgoarena.data.User
+import com.jalgoarena.domain.User
 import org.assertj.core.api.Assertions.assertThat
 import org.intellij.lang.annotations.Language
 import org.junit.Before

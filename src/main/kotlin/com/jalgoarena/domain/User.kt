@@ -1,8 +1,7 @@
-package com.jalgoarena.data
+package com.jalgoarena.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.jalgoarena.domain.Role
 import javax.persistence.*
 
 @Entity

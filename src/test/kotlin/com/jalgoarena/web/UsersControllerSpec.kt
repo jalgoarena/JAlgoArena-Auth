@@ -27,8 +27,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.util.*
 
 @RunWith(SpringRunner::class)
@@ -56,9 +56,11 @@ class UsersControllerSpec {
 
         givenJwtSettings()
 
-        mockMvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(LOGIN_REQUEST_MIKOLAJ))
+        mockMvc.perform(
+                post("/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(LOGIN_REQUEST_MIKOLAJ))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.token", notNullValue()))
                 .andExpect(jsonPath("$.user.username", `is`(USER_MIKOLAJ.username)))
@@ -71,7 +73,8 @@ class UsersControllerSpec {
         ))
 
         mockMvc.perform(get("/users")
-                .accept(MediaType.APPLICATION_JSON))
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$", hasSize<ArrayNode>(2)))
                 .andExpect(jsonPath("$[0].username", `is`(USER_MIKOLAJ.username)))
@@ -89,8 +92,9 @@ class UsersControllerSpec {
                 .willReturn(USER_JULIA)
 
         mockMvc.perform(post("/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonUser(USER_JULIA_WITHOUT_ID)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonUser(USER_JULIA_WITHOUT_ID)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("$.username", `is`(USER_JULIA.username)))
                 .andExpect(jsonPath("$.id", `is`(USER_JULIA.id)))
@@ -103,8 +107,9 @@ class UsersControllerSpec {
                 .willAnswer { throw EmailIsAlreadyUsedException() }
 
         mockMvc.perform(post("/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonUser(USER_JULIA_WITHOUT_ID)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonUser(USER_JULIA_WITHOUT_ID)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isConflict)
                 .andExpect(jsonPath("$.error", `is`("Registration Error")))
                 .andExpect(jsonPath("$.message", `is`("Email is already used")))
@@ -116,8 +121,9 @@ class UsersControllerSpec {
                 .willAnswer { throw UsernameIsAlreadyUsedException() }
 
         mockMvc.perform(post("/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonUser(USER_JULIA_WITHOUT_ID)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonUser(USER_JULIA_WITHOUT_ID)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isConflict)
                 .andExpect(jsonPath("$.error", `is`("Registration Error")))
                 .andExpect(jsonPath("$.message", `is`("User name is already used")))
@@ -126,7 +132,8 @@ class UsersControllerSpec {
     @Test
     fun get_api_user_returns_401_if_user_did_not_logged_in() {
         mockMvc.perform(get("/api/user")
-                .accept(MediaType.APPLICATION_JSON))
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isUnauthorized)
     }
 
@@ -135,22 +142,27 @@ class UsersControllerSpec {
         givenLoggedInUser(USER_MIKOLAJ)
 
         mockMvc.perform(get("/api/user")
-                .header("X-Authorization", DUMMY_TOKEN)
-                .accept(MediaType.APPLICATION_JSON))
+                    .header("X-Authorization", DUMMY_TOKEN)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.username", `is`(USER_MIKOLAJ.username)))
-                .andExpect(jsonPath("$.password", `is`("")))
-                .andExpect(jsonPath("$.email", `is`(USER_MIKOLAJ.email)))
-                .andExpect(jsonPath("$.region", `is`(USER_MIKOLAJ.region)))
-                .andExpect(jsonPath("$.team", `is`(USER_MIKOLAJ.team)))
-                .andExpect(jsonPath("$.role", `is`("USER")))
-                .andExpect(jsonPath("$.id", `is`(USER_MIKOLAJ.id)))
+                .andExpect(content().json("""{
+    "username": "${USER_MIKOLAJ.username}",
+    "password": "",
+    "email": "${USER_MIKOLAJ.email}",
+    "region": "${USER_MIKOLAJ.region}",
+    "team": "${USER_MIKOLAJ.team}",
+    "role": "USER",
+    "id": ${USER_MIKOLAJ.id}
+}""".trimIndent()))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
     }
 
     @Test
     fun get_api_users_returns_401_if_user_did_not_logged_in() {
         mockMvc.perform(get("/api/users")
-                .accept(MediaType.APPLICATION_JSON))
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isUnauthorized)
     }
 
@@ -159,8 +171,9 @@ class UsersControllerSpec {
         givenLoggedInUser(USER_MIKOLAJ)
 
         mockMvc.perform(get("/api/users")
-                .header("X-Authorization", DUMMY_TOKEN)
-                .accept(MediaType.APPLICATION_JSON))
+                    .header("X-Authorization", DUMMY_TOKEN)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isForbidden)
     }
 
@@ -172,9 +185,10 @@ class UsersControllerSpec {
         givenJwtSettings()
 
         mockMvc.perform(post("/login")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(LOGIN_REQUEST_MIKOLAJ))
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(LOGIN_REQUEST_MIKOLAJ))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isForbidden)
     }
 
@@ -186,17 +200,19 @@ class UsersControllerSpec {
         givenJwtSettings()
 
         mockMvc.perform(post("/login")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(""))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest)
     }
 
     @Test
     fun put_api_users_returns_401_if_user_did_not_logged_in() {
         mockMvc.perform(put("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonUser(USER_ADMIN)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonUser(USER_ADMIN)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isUnauthorized)
     }
 
@@ -205,9 +221,10 @@ class UsersControllerSpec {
         givenLoggedInUser(USER_MIKOLAJ)
 
         mockMvc.perform(put("/api/users")
-                .header("X-Authorization", DUMMY_TOKEN)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonUser(USER_ADMIN.copy(password = "password3"))))
+                    .header("X-Authorization", DUMMY_TOKEN)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonUser(USER_ADMIN.copy(password = "password3"))))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isForbidden)
     }
 
@@ -221,9 +238,10 @@ class UsersControllerSpec {
                 .willReturn(updatedUser)
 
         mockMvc.perform(put("/api/users")
-                .header("X-Authorization", DUMMY_TOKEN)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonUser(updatedUser)))
+                    .header("X-Authorization", DUMMY_TOKEN)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonUser(updatedUser)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.team", `is`("New_team")))
     }
@@ -276,7 +294,7 @@ class UsersControllerSpec {
   "region": "${user.region}",
   "team": "${user.team}",
   "role": "${user.role}",
-  "id": "${user.id}"
+  "id": ${user.id}
 }
 """
 

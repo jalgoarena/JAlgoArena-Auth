@@ -3,7 +3,6 @@ package com.jalgoarena.web
 import com.jalgoarena.domain.User
 import com.jalgoarena.data.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -16,7 +15,6 @@ open class UsersController(
         @Autowired private val usersRepository: UserRepository
 ) {
 
-    @Cacheable("users")
     @GetMapping("/users", produces = ["application/json"])
     open fun publicUsers() =
             usersRepository.findAll().map { it.copy(password = "") }
